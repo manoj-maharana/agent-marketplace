@@ -1,0 +1,16 @@
+[
+  { "slug": "education", "name": "Education" },
+  { "slug": "writing", "name": "Writing" },
+  { "slug": "copywriting", "name": "Copywriting" },
+  { "slug": "programming", "name": "Programming" },
+  { "slug": "marketing", "name": "Marketing" },
+  { "slug": "life", "name": "Life" },
+  { "slug": "office", "name": "Office" },
+  { "slug": "translation", "name": "Translation" },
+  { "slug": "research", "name": "Research" },
+  { "slug": "academic", "name": "Academic" },
+  { "slug": "career", "name": "Career" },
+  { "slug": "design", "name": "Design" },
+  { "slug": "entertainment", "name": "Entertainment" },
+  { "slug": "general", "name": "General" }
+]

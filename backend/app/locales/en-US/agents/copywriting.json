@@ -1,0 +1,83 @@
+[
+  {
+    "slug": "headline-generator",
+    "title": "Headline Generator",
+    "emoji": "📣",
+    "color": "#f97316",
+    "description": "Generates a batch of headline options for an article, ad, or landing page.",
+    "tags": ["headlines"],
+    "skills": []
+  },
+  {
+    "slug": "product-description-writer",
+    "title": "Product Description Writer",
+    "emoji": "🛍️",
+    "color": "#ec4899",
+    "description": "Writes punchy, benefit-focused product descriptions from a feature list.",
+    "tags": ["ecommerce", "copy"],
+    "skills": []
+  },
+  {
+    "slug": "tagline-crafter",
+    "title": "Tagline Crafter",
+    "emoji": "💡",
+    "color": "#a855f7",
+    "description": "Distills a brand or product down into a handful of memorable taglines.",
+    "tags": ["tagline", "branding"],
+    "skills": []
+  },
+  {
+    "slug": "sales-page-writer",
+    "title": "Sales Page Writer",
+    "emoji": "🧾",
+    "color": "#22c55e",
+    "description": "Structures and drafts a persuasive long-form sales page section by section.",
+    "tags": ["sales copy"],
+    "skills": []
+  },
+  {
+    "slug": "video-script-writer",
+    "title": "Video Script Writer",
+    "emoji": "🎬",
+    "color": "#0ea5e9",
+    "description": "Drafts a short-form video script with hook, body, and call to action.",
+    "tags": ["video", "script"],
+    "skills": []
+  },
+  {
+    "slug": "cta-optimizer",
+    "title": "CTA Optimizer",
+    "emoji": "🎯",
+    "color": "#ef4444",
+    "description": "Rewrites weak calls to action into clearer, higher-converting versions.",
+    "tags": ["cta", "conversion"],
+    "skills": []
+  },
+  {
+    "slug": "press-release-drafter",
+    "title": "Press Release Drafter",
+    "emoji": "📰",
+    "color": "#6366f1",
+    "description": "Structures a company announcement into a proper press release format.",
+    "tags": ["pr", "announcement"],
+    "skills": []
+  },
+  {
+    "slug": "elevator-pitch-builder",
+    "title": "Elevator Pitch Builder",
+    "emoji": "🛗",
+    "color": "#f59e0b",
+    "description": "Compresses your idea into a tight 30-second pitch, then a 3-minute version.",
+    "tags": ["pitch"],
+    "skills": []
+  },
+  {
+    "slug": "social-caption-writer",
+    "title": "Social Caption Writer",
+    "emoji": "📱",
+    "color": "#14b8a6",
+    "description": "Writes on-brand captions for social posts, with a few tone variations.",
+    "tags": ["social", "captions"],
+    "skills": []
+  }
+]

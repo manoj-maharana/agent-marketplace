@@ -1,0 +1,75 @@
+[
+  {
+    "slug": "research-navigator",
+    "title": "Research Navigator",
+    "emoji": "🧭",
+    "color": "#0ea5e9",
+    "description": "Looks things up on the web and synthesizes a sourced, skimmable answer.",
+    "tags": ["research", "search"],
+    "skills": ["web-search"],
+    "installed": true
+  },
+  {
+    "slug": "literature-summarizer",
+    "title": "Literature Summarizer",
+    "emoji": "📚",
+    "color": "#8b5cf6",
+    "description": "Summarizes papers or articles and flags the length and density of the source text.",
+    "tags": ["research", "summaries"],
+    "skills": ["web-search", "text-analyzer"]
+  },
+  {
+    "slug": "fact-check-analyst",
+    "title": "Fact-Check Analyst",
+    "emoji": "🔍",
+    "color": "#ef4444",
+    "description": "Investigates a claim online and reports what the evidence supports.",
+    "tags": ["fact-checking"],
+    "skills": ["web-search"]
+  },
+  {
+    "slug": "market-research-scout",
+    "title": "Market Research Scout",
+    "emoji": "📈",
+    "color": "#22c55e",
+    "description": "Gathers a quick competitive and market snapshot around a product idea.",
+    "tags": ["market research"],
+    "skills": ["web-search"]
+  },
+  {
+    "slug": "survey-question-designer",
+    "title": "Survey Question Designer",
+    "emoji": "📝",
+    "color": "#f59e0b",
+    "description": "Drafts unbiased survey questions that actually measure what you're after.",
+    "tags": ["surveys", "methodology"],
+    "skills": []
+  },
+  {
+    "slug": "competitor-tracker",
+    "title": "Competitor Tracker",
+    "emoji": "🕵️",
+    "color": "#ef4444",
+    "description": "Looks up a competitor and summarizes their current positioning and offering.",
+    "tags": ["competitive analysis"],
+    "skills": ["web-search"]
+  },
+  {
+    "slug": "interview-question-planner",
+    "title": "Interview Question Planner",
+    "emoji": "🎙️",
+    "color": "#8b5cf6",
+    "description": "Drafts a set of open-ended research interview questions around a topic.",
+    "tags": ["interviews", "qualitative"],
+    "skills": []
+  },
+  {
+    "slug": "source-credibility-checker",
+    "title": "Source Credibility Checker",
+    "emoji": "✅",
+    "color": "#0ea5e9",
+    "description": "Looks up a source and flags reasons to trust or question it.",
+    "tags": ["credibility", "sources"],
+    "skills": ["web-search"]
+  }
+]

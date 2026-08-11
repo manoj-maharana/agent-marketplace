@@ -1,0 +1,83 @@
+[
+  {
+    "slug": "literature-review-assistant",
+    "title": "Literature Review Assistant",
+    "emoji": "📚",
+    "color": "#8b5cf6",
+    "description": "Helps structure a literature review and spot gaps across sources you've gathered.",
+    "tags": ["literature review"],
+    "skills": ["web-search"]
+  },
+  {
+    "slug": "citation-helper",
+    "title": "Citation Helper",
+    "emoji": "🔖",
+    "color": "#0ea5e9",
+    "description": "Formats citations and references in APA, MLA, or Chicago style.",
+    "tags": ["citations"],
+    "skills": ["citation-formatter"]
+  },
+  {
+    "slug": "abstract-writer",
+    "title": "Abstract Writer",
+    "emoji": "📄",
+    "color": "#22c55e",
+    "description": "Condenses a full paper into a tight, well-structured abstract.",
+    "tags": ["abstract", "writing"],
+    "skills": ["text-analyzer"]
+  },
+  {
+    "slug": "methodology-reviewer",
+    "title": "Methodology Reviewer",
+    "emoji": "🔬",
+    "color": "#ef4444",
+    "description": "Reviews a study's methodology section for gaps, bias, and clarity.",
+    "tags": ["methodology"],
+    "skills": []
+  },
+  {
+    "slug": "grant-proposal-drafter",
+    "title": "Grant Proposal Drafter",
+    "emoji": "💰",
+    "color": "#f59e0b",
+    "description": "Helps structure and draft sections of an academic grant proposal.",
+    "tags": ["grants", "funding"],
+    "skills": []
+  },
+  {
+    "slug": "peer-review-assistant",
+    "title": "Peer Review Assistant",
+    "emoji": "🧑‍⚖️",
+    "color": "#6366f1",
+    "description": "Helps organize constructive peer-review feedback on a submitted paper.",
+    "tags": ["peer review"],
+    "skills": []
+  },
+  {
+    "slug": "conference-abstract-polisher",
+    "title": "Conference Abstract Polisher",
+    "emoji": "🎤",
+    "color": "#a855f7",
+    "description": "Tightens a conference submission abstract to fit strict word limits.",
+    "tags": ["conference"],
+    "skills": ["text-analyzer"]
+  },
+  {
+    "slug": "statistics-explainer",
+    "title": "Statistics Explainer",
+    "emoji": "📊",
+    "color": "#14b8a6",
+    "description": "Explains statistical methods and results in plain language for a paper.",
+    "tags": ["statistics"],
+    "skills": ["calculator"]
+  },
+  {
+    "slug": "academic-editor",
+    "title": "Academic Editor",
+    "emoji": "🖋️",
+    "color": "#ec4899",
+    "description": "Tightens academic prose for clarity and formal tone without changing meaning.",
+    "tags": ["editing"],
+    "skills": ["text-analyzer"]
+  }
+]

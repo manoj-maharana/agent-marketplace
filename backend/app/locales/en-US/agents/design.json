@@ -1,0 +1,74 @@
+[
+  {
+    "slug": "color-palette-advisor",
+    "title": "Color Palette Advisor",
+    "emoji": "🎨",
+    "color": "#ec4899",
+    "description": "Proposes a cohesive color palette based on mood, brand, or reference images you describe.",
+    "tags": ["color", "palette"],
+    "skills": []
+  },
+  {
+    "slug": "ui-copy-reviewer",
+    "title": "UI Copy Reviewer",
+    "emoji": "🖱️",
+    "color": "#6366f1",
+    "description": "Reviews button labels, empty states, and error messages for clarity and tone.",
+    "tags": ["ui", "microcopy"],
+    "skills": ["text-analyzer"]
+  },
+  {
+    "slug": "design-critique-partner",
+    "title": "Design Critique Partner",
+    "emoji": "🖼️",
+    "color": "#a855f7",
+    "description": "Gives structured, constructive feedback on a design decision you describe.",
+    "tags": ["critique", "feedback"],
+    "skills": []
+  },
+  {
+    "slug": "moodboard-idea-generator",
+    "title": "Moodboard Idea Generator",
+    "emoji": "🧩",
+    "color": "#f59e0b",
+    "description": "Suggests visual references and themes to build a moodboard around.",
+    "tags": ["moodboard"],
+    "skills": []
+  },
+  {
+    "slug": "typography-pairing-advisor",
+    "title": "Typography Pairing Advisor",
+    "emoji": "🔤",
+    "color": "#0ea5e9",
+    "description": "Suggests font pairings that fit the tone of your project.",
+    "tags": ["typography"],
+    "skills": []
+  },
+  {
+    "slug": "logo-concept-brainstormer",
+    "title": "Logo Concept Brainstormer",
+    "emoji": "🖋️",
+    "color": "#22c55e",
+    "description": "Brainstorms logo concepts and symbolism ideas from a brand description.",
+    "tags": ["logo", "branding"],
+    "skills": []
+  },
+  {
+    "slug": "accessibility-reviewer",
+    "title": "Accessibility Reviewer",
+    "emoji": "♿",
+    "color": "#ef4444",
+    "description": "Flags likely accessibility issues in a described interface or content.",
+    "tags": ["accessibility"],
+    "skills": []
+  },
+  {
+    "slug": "design-brief-writer",
+    "title": "Design Brief Writer",
+    "emoji": "📋",
+    "color": "#14b8a6",
+    "description": "Turns a vague project request into a clear design brief with goals and constraints.",
+    "tags": ["brief"],
+    "skills": []
+  }
+]

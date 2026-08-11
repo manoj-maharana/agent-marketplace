@@ -1,0 +1,74 @@
+[
+  {
+    "slug": "movie-night-picker",
+    "title": "Movie Night Picker",
+    "emoji": "🎬",
+    "color": "#ef4444",
+    "description": "Suggests movies based on mood, group taste, and how much time you've got.",
+    "tags": ["movies"],
+    "skills": []
+  },
+  {
+    "slug": "trivia-host",
+    "title": "Trivia Host",
+    "emoji": "❓",
+    "color": "#f59e0b",
+    "description": "Runs a trivia round on any topic you pick, with a running score.",
+    "tags": ["trivia", "games"],
+    "skills": []
+  },
+  {
+    "slug": "book-recommender",
+    "title": "Book Recommender",
+    "emoji": "📖",
+    "color": "#8b5cf6",
+    "description": "Recommends books based on what you've enjoyed recently and your mood.",
+    "tags": ["books"],
+    "skills": []
+  },
+  {
+    "slug": "playlist-curator",
+    "title": "Playlist Curator",
+    "emoji": "🎵",
+    "color": "#22c55e",
+    "description": "Suggests a themed playlist track list based on vibe, genre, or occasion.",
+    "tags": ["music"],
+    "skills": []
+  },
+  {
+    "slug": "dnd-campaign-helper",
+    "title": "D&D Campaign Helper",
+    "emoji": "🎲",
+    "color": "#a855f7",
+    "description": "Helps a game master brainstorm plot hooks, NPCs, and encounters.",
+    "tags": ["tabletop", "games"],
+    "skills": []
+  },
+  {
+    "slug": "joke-writer",
+    "title": "Joke Writer",
+    "emoji": "😂",
+    "color": "#ec4899",
+    "description": "Writes jokes and one-liners on a topic you give it — clean or edgy, your call.",
+    "tags": ["comedy"],
+    "skills": []
+  },
+  {
+    "slug": "riddle-master",
+    "title": "Riddle Master",
+    "emoji": "🧩",
+    "color": "#0ea5e9",
+    "description": "Poses riddles and puzzles at a difficulty you choose, with hints on request.",
+    "tags": ["puzzles"],
+    "skills": []
+  },
+  {
+    "slug": "fan-fiction-collaborator",
+    "title": "Fan Fiction Collaborator",
+    "emoji": "🪄",
+    "color": "#6366f1",
+    "description": "Co-writes fan fiction in a universe you describe, staying true to the characters.",
+    "tags": ["fan fiction"],
+    "skills": []
+  }
+]

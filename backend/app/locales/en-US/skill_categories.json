@@ -1,0 +1,9 @@
+[
+  { "slug": "productivity", "name": "Productivity" },
+  { "slug": "research-tools", "name": "Research" },
+  { "slug": "data", "name": "Data" },
+  { "slug": "creative", "name": "Creative" },
+  { "slug": "dev-tools", "name": "Dev Tools" },
+  { "slug": "communication", "name": "Communication" },
+  { "slug": "learning", "name": "Learning" }
+]

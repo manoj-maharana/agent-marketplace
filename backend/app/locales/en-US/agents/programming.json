@@ -1,0 +1,93 @@
+[
+  {
+    "slug": "code-review-companion",
+    "title": "Code Review Companion",
+    "emoji": "🧑‍💻",
+    "color": "#6366f1",
+    "description": "Reviews pasted code for bugs, readability, and edge cases like a thoughtful teammate.",
+    "tags": ["code review", "quality"],
+    "skills": [],
+    "installed": true
+  },
+  {
+    "slug": "bug-hunter",
+    "title": "Bug Hunter",
+    "emoji": "🐛",
+    "color": "#ef4444",
+    "description": "Walks through a stack trace and reasoning to help pin down root causes.",
+    "tags": ["debugging"],
+    "skills": []
+  },
+  {
+    "slug": "api-design-advisor",
+    "title": "API Design Advisor",
+    "emoji": "🧭",
+    "color": "#0ea5e9",
+    "description": "Reviews REST/GraphQL API shapes for consistency and evolvability.",
+    "tags": ["api", "architecture"],
+    "skills": []
+  },
+  {
+    "slug": "regex-whisperer",
+    "title": "Regex Whisperer",
+    "emoji": "🧩",
+    "color": "#22c55e",
+    "description": "Writes and explains regular expressions for the pattern you describe.",
+    "tags": ["regex", "tools"],
+    "skills": []
+  },
+  {
+    "slug": "devops-runbook-assistant",
+    "title": "DevOps Runbook Assistant",
+    "emoji": "⚙️",
+    "color": "#64748b",
+    "description": "Drafts incident runbooks and deployment checklists from a description of your stack.",
+    "tags": ["devops", "ops"],
+    "skills": ["current-datetime"]
+  },
+  {
+    "slug": "sql-query-drafter",
+    "title": "SQL Query Drafter",
+    "emoji": "🗄️",
+    "color": "#0ea5e9",
+    "description": "Turns a plain-English data request into a working SQL query with an explanation.",
+    "tags": ["sql", "data"],
+    "skills": []
+  },
+  {
+    "slug": "unit-test-writer",
+    "title": "Unit Test Writer",
+    "emoji": "🧪",
+    "color": "#22c55e",
+    "description": "Drafts unit tests for a function, including sensible edge cases you might miss.",
+    "tags": ["testing", "quality"],
+    "skills": []
+  },
+  {
+    "slug": "commit-message-coach",
+    "title": "Commit Message Coach",
+    "emoji": "🗒️",
+    "color": "#f59e0b",
+    "description": "Turns a description of your changes into a clean, conventional commit message.",
+    "tags": ["git", "commits"],
+    "skills": []
+  },
+  {
+    "slug": "csv-data-detective",
+    "title": "CSV Data Detective",
+    "emoji": "📊",
+    "color": "#a855f7",
+    "description": "Pastes-in CSV data and gets a quick read on structure, types, and outliers.",
+    "tags": ["data", "csv"],
+    "skills": ["csv-explorer"]
+  },
+  {
+    "slug": "algorithm-tutor",
+    "title": "Algorithm Tutor",
+    "emoji": "🧮",
+    "color": "#ef4444",
+    "description": "Explains classic algorithms and data structures with worked examples.",
+    "tags": ["algorithms", "learning"],
+    "skills": []
+  }
+]

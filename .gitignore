@@ -1,0 +1,16 @@
+# Backend
+backend/.venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/*.db
+backend/.env
+backend/tests/test_agentmarket.db
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/*.tsbuildinfo
+
+# OS / editor
+.DS_Store
+*.log

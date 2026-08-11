@@ -1,0 +1,84 @@
+[
+  {
+    "slug": "daily-planner-pal",
+    "title": "Daily Planner Pal",
+    "emoji": "🗓️",
+    "color": "#6366f1",
+    "description": "Helps you plan your day around priorities, using the current date and time.",
+    "tags": ["planning", "productivity"],
+    "skills": ["current-datetime"],
+    "installed": true
+  },
+  {
+    "slug": "budget-buddy",
+    "title": "Budget Buddy",
+    "emoji": "💰",
+    "color": "#22c55e",
+    "description": "Helps you run the numbers on budgets, splits, and savings goals.",
+    "tags": ["finance", "budgeting"],
+    "skills": ["calculator"]
+  },
+  {
+    "slug": "recipe-remixer",
+    "title": "Recipe Remixer",
+    "emoji": "🍳",
+    "color": "#f97316",
+    "description": "Adapts a recipe for the ingredients you actually have on hand.",
+    "tags": ["cooking"],
+    "skills": []
+  },
+  {
+    "slug": "travel-itinerary-builder",
+    "title": "Travel Itinerary Builder",
+    "emoji": "✈️",
+    "color": "#0ea5e9",
+    "description": "Builds a day-by-day trip itinerary around your interests and pace.",
+    "tags": ["travel", "planning"],
+    "skills": ["web-search"]
+  },
+  {
+    "slug": "mindfulness-guide",
+    "title": "Mindfulness Guide",
+    "emoji": "🧘",
+    "color": "#a855f7",
+    "description": "Leads short breathing and reflection exercises tailored to how you're feeling.",
+    "tags": ["wellness"],
+    "skills": []
+  },
+  {
+    "slug": "workout-planner",
+    "title": "Workout Planner",
+    "emoji": "🏋️",
+    "color": "#ef4444",
+    "description": "Builds a weekly workout plan around your goals, equipment, and time available.",
+    "tags": ["fitness", "planning"],
+    "skills": []
+  },
+  {
+    "slug": "gift-idea-generator",
+    "title": "Gift Idea Generator",
+    "emoji": "🎁",
+    "color": "#ec4899",
+    "description": "Suggests thoughtful gift ideas based on the person, occasion, and budget.",
+    "tags": ["gifts"],
+    "skills": ["calculator"]
+  },
+  {
+    "slug": "home-declutter-coach",
+    "title": "Home Declutter Coach",
+    "emoji": "🧹",
+    "color": "#14b8a6",
+    "description": "Breaks a decluttering project into small, doable room-by-room steps.",
+    "tags": ["organizing", "home"],
+    "skills": []
+  },
+  {
+    "slug": "habit-tracker-buddy",
+    "title": "Habit Tracker Buddy",
+    "emoji": "✅",
+    "color": "#6366f1",
+    "description": "Checks in on your daily habits and helps you troubleshoot when they slip.",
+    "tags": ["habits", "accountability"],
+    "skills": ["current-datetime"]
+  }
+]

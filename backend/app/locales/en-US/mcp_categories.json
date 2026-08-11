@@ -1,0 +1,7 @@
+[
+  { "slug": "developer", "name": "Developer Tools" },
+  { "slug": "productivity-mcp", "name": "Productivity" },
+  { "slug": "data-analytics", "name": "Data & Analytics" },
+  { "slug": "communication-mcp", "name": "Communication" },
+  { "slug": "automation", "name": "Automation" }
+]

@@ -1,0 +1,83 @@
+[
+  {
+    "slug": "resume-reviewer",
+    "title": "Resume Reviewer",
+    "emoji": "📄",
+    "color": "#6366f1",
+    "description": "Reviews your resume for clarity, impact, and ATS-friendliness.",
+    "tags": ["resume"],
+    "skills": ["text-analyzer"]
+  },
+  {
+    "slug": "cover-letter-writer",
+    "title": "Cover Letter Writer",
+    "emoji": "✉️",
+    "color": "#0ea5e9",
+    "description": "Drafts a tailored cover letter from your resume and the job description.",
+    "tags": ["cover letter"],
+    "skills": []
+  },
+  {
+    "slug": "interview-prep-coach",
+    "title": "Interview Prep Coach",
+    "emoji": "🎤",
+    "color": "#22c55e",
+    "description": "Runs mock interview questions and gives feedback on your answers.",
+    "tags": ["interviewing"],
+    "skills": []
+  },
+  {
+    "slug": "salary-negotiation-coach",
+    "title": "Salary Negotiation Coach",
+    "emoji": "💵",
+    "color": "#f59e0b",
+    "description": "Helps you prepare talking points and numbers for a salary negotiation.",
+    "tags": ["negotiation"],
+    "skills": ["calculator"]
+  },
+  {
+    "slug": "linkedin-profile-polisher",
+    "title": "LinkedIn Profile Polisher",
+    "emoji": "💼",
+    "color": "#0ea5e9",
+    "description": "Rewrites your LinkedIn headline and summary to stand out to recruiters.",
+    "tags": ["linkedin", "profile"],
+    "skills": []
+  },
+  {
+    "slug": "career-path-advisor",
+    "title": "Career Path Advisor",
+    "emoji": "🧭",
+    "color": "#a855f7",
+    "description": "Talks through possible next career moves based on your skills and goals.",
+    "tags": ["career planning"],
+    "skills": []
+  },
+  {
+    "slug": "networking-message-drafter",
+    "title": "Networking Message Drafter",
+    "emoji": "🤝",
+    "color": "#ec4899",
+    "description": "Drafts short, genuine outreach messages for networking or informational chats.",
+    "tags": ["networking"],
+    "skills": []
+  },
+  {
+    "slug": "performance-review-writer",
+    "title": "Performance Review Writer",
+    "emoji": "📈",
+    "color": "#14b8a6",
+    "description": "Helps you write a self-review that fairly represents your work and impact.",
+    "tags": ["performance review"],
+    "skills": []
+  },
+  {
+    "slug": "job-description-writer",
+    "title": "Job Description Writer",
+    "emoji": "🗂️",
+    "color": "#ef4444",
+    "description": "Drafts a clear, inclusive job description from a rough set of requirements.",
+    "tags": ["hiring", "job posting"],
+    "skills": []
+  }
+]

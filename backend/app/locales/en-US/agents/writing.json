@@ -1,0 +1,83 @@
+[
+  {
+    "slug": "blog-post-drafter",
+    "title": "Blog Post Drafter",
+    "emoji": "✍️",
+    "color": "#ec4899",
+    "description": "Turns a topic and outline into a full first-draft blog post in your voice.",
+    "tags": ["blogging", "drafting"],
+    "skills": []
+  },
+  {
+    "slug": "email-polisher",
+    "title": "Email Polisher",
+    "emoji": "📧",
+    "color": "#14b8a6",
+    "description": "Tightens tone, clarity, and length of a draft email before you hit send.",
+    "tags": ["email", "editing"],
+    "skills": ["text-analyzer"]
+  },
+  {
+    "slug": "creative-story-weaver",
+    "title": "Creative Story Weaver",
+    "emoji": "🪄",
+    "color": "#8b5cf6",
+    "description": "Co-writes short fiction, building on your premise scene by scene.",
+    "tags": ["fiction", "creative"],
+    "skills": []
+  },
+  {
+    "slug": "grammar-style-editor",
+    "title": "Grammar & Style Editor",
+    "emoji": "🖋️",
+    "color": "#f43f5e",
+    "description": "Proofreads for grammar, tightens wordy sentences, and flags tone inconsistencies.",
+    "tags": ["editing", "grammar"],
+    "skills": ["text-analyzer"]
+  },
+  {
+    "slug": "newsletter-composer",
+    "title": "Newsletter Composer",
+    "emoji": "📰",
+    "color": "#eab308",
+    "description": "Assembles a scannable newsletter from a list of updates and links.",
+    "tags": ["newsletter", "content"],
+    "skills": []
+  },
+  {
+    "slug": "outline-architect",
+    "title": "Outline Architect",
+    "emoji": "🧱",
+    "color": "#6366f1",
+    "description": "Turns a rough idea into a structured outline before you write a single sentence.",
+    "tags": ["outlining", "planning"],
+    "skills": []
+  },
+  {
+    "slug": "poetry-companion",
+    "title": "Poetry Companion",
+    "emoji": "🌙",
+    "color": "#a855f7",
+    "description": "Co-writes and refines poems, playing with rhythm, imagery, and form.",
+    "tags": ["poetry", "creative"],
+    "skills": []
+  },
+  {
+    "slug": "tone-shifter",
+    "title": "Tone Shifter",
+    "emoji": "🎭",
+    "color": "#ec4899",
+    "description": "Rewrites the same passage in a different tone — formal, playful, blunt, warm.",
+    "tags": ["tone", "rewriting"],
+    "skills": ["text-analyzer"]
+  },
+  {
+    "slug": "bio-writer",
+    "title": "Bio Writer",
+    "emoji": "🪪",
+    "color": "#0ea5e9",
+    "description": "Drafts short professional or social bios in a few different lengths.",
+    "tags": ["bio", "profile"],
+    "skills": []
+  }
+]

@@ -1,0 +1,335 @@
+[
+  {
+    "slug": "local-filesystem-bridge",
+    "name": "Local Filesystem Bridge",
+    "icon": "🗂️",
+    "description": "Lets an agent read, write, and search files in a sandboxed local directory.",
+    "category": "developer",
+    "transport": "local",
+    "is_functional": false
+  },
+  {
+    "slug": "git-repo-connector",
+    "name": "Git Repo Connector",
+    "icon": "🔧",
+    "description": "Exposes repository browsing, diffs, and commit history to an agent.",
+    "category": "developer",
+    "transport": "local",
+    "is_functional": false
+  },
+  {
+    "slug": "shell-sandbox",
+    "name": "Shell Sandbox",
+    "icon": "💻",
+    "description": "Runs shell commands in an isolated sandbox and streams the output back.",
+    "category": "developer",
+    "transport": "local",
+    "is_functional": false
+  },
+  {
+    "slug": "database-inspector",
+    "name": "Database Inspector",
+    "icon": "🗄️",
+    "description": "Lets an agent inspect schemas and run read-only queries against a database.",
+    "category": "developer",
+    "transport": "remote",
+    "is_functional": false
+  },
+  {
+    "slug": "browser-automation-server",
+    "name": "Browser Automation Server",
+    "icon": "🌐",
+    "description": "Drives a headless browser for navigation, form-filling, and screenshots.",
+    "category": "developer",
+    "transport": "local",
+    "is_functional": false
+  },
+  {
+    "slug": "package-registry-lookup",
+    "name": "Package Registry Lookup",
+    "icon": "📦",
+    "description": "Looks up package versions, dependencies, and changelogs across registries.",
+    "category": "developer",
+    "transport": "remote",
+    "is_functional": false
+  },
+  {
+    "slug": "log-tail-connector",
+    "name": "Log Tail Connector",
+    "icon": "📜",
+    "description": "Streams and searches recent application logs from a running service.",
+    "category": "developer",
+    "transport": "local",
+    "is_functional": false
+  },
+  {
+    "slug": "api-schema-explorer",
+    "name": "API Schema Explorer",
+    "icon": "🧭",
+    "description": "Loads an OpenAPI spec so an agent can look up endpoints and parameters.",
+    "category": "developer",
+    "transport": "hybrid",
+    "is_functional": false
+  },
+  {
+    "slug": "task-board-connector",
+    "name": "Task Board Connector",
+    "icon": "🗒️",
+    "description": "Reads and updates cards on a kanban-style task board.",
+    "category": "productivity-mcp",
+    "transport": "remote",
+    "is_functional": false
+  },
+  {
+    "slug": "note-vault-bridge",
+    "name": "Note Vault Bridge",
+    "icon": "🗃️",
+    "description": "Gives an agent read/write access to a local notes vault.",
+    "category": "productivity-mcp",
+    "transport": "local",
+    "is_functional": false
+  },
+  {
+    "slug": "document-drafting-server",
+    "name": "Document Drafting Server",
+    "icon": "📄",
+    "description": "Creates and edits structured documents from an agent's output.",
+    "category": "productivity-mcp",
+    "transport": "local",
+    "is_functional": false
+  },
+  {
+    "slug": "spreadsheet-connector",
+    "name": "Spreadsheet Connector",
+    "icon": "📊",
+    "description": "Reads and writes cells in a local spreadsheet file.",
+    "category": "productivity-mcp",
+    "transport": "local",
+    "is_functional": false
+  },
+  {
+    "slug": "reminder-scheduler",
+    "name": "Reminder Scheduler",
+    "icon": "⏰",
+    "description": "Lets an agent create and manage local time-based reminders.",
+    "category": "productivity-mcp",
+    "transport": "local",
+    "is_functional": false
+  },
+  {
+    "slug": "clipboard-history-server",
+    "name": "Clipboard History Server",
+    "icon": "📋",
+    "description": "Exposes recent clipboard history for an agent to reference.",
+    "category": "productivity-mcp",
+    "transport": "local",
+    "is_functional": false
+  },
+  {
+    "slug": "pdf-form-filler-server",
+    "name": "PDF Form Filler Server",
+    "icon": "🧾",
+    "description": "Fills structured fields into a local PDF form template.",
+    "category": "productivity-mcp",
+    "transport": "local",
+    "is_functional": false
+  },
+  {
+    "slug": "csv-warehouse-connector",
+    "name": "CSV Warehouse Connector",
+    "icon": "🗄️",
+    "description": "Queries a folder of CSV files as if they were tables.",
+    "category": "data-analytics",
+    "transport": "local",
+    "is_functional": false
+  },
+  {
+    "slug": "analytics-events-connector",
+    "name": "Analytics Events Connector",
+    "icon": "📈",
+    "description": "Lets an agent query recent product analytics events.",
+    "category": "data-analytics",
+    "transport": "remote",
+    "is_functional": false
+  },
+  {
+    "slug": "chart-rendering-server",
+    "name": "Chart Rendering Server",
+    "icon": "📉",
+    "description": "Renders a chart image from structured data an agent provides.",
+    "category": "data-analytics",
+    "transport": "local",
+    "is_functional": false
+  },
+  {
+    "slug": "vector-index-server",
+    "name": "Vector Index Server",
+    "icon": "🧬",
+    "description": "Exposes semantic search over a local embedding index.",
+    "category": "data-analytics",
+    "transport": "local",
+    "is_functional": false
+  },
+  {
+    "slug": "spreadsheet-formula-runner",
+    "name": "Spreadsheet Formula Runner",
+    "icon": "🧮",
+    "description": "Evaluates spreadsheet-style formulas over structured input data.",
+    "category": "data-analytics",
+    "transport": "local",
+    "is_functional": false
+  },
+  {
+    "slug": "geo-lookup-server",
+    "name": "Geo Lookup Server",
+    "icon": "🗺️",
+    "description": "Resolves place names to coordinates and basic regional metadata.",
+    "category": "data-analytics",
+    "transport": "remote",
+    "is_functional": false
+  },
+  {
+    "slug": "data-quality-checker",
+    "name": "Data Quality Checker",
+    "icon": "✅",
+    "description": "Runs configurable data-quality checks against a tabular dataset.",
+    "category": "data-analytics",
+    "transport": "local",
+    "is_functional": false
+  },
+  {
+    "slug": "email-inbox-connector",
+    "name": "Email Inbox Connector",
+    "icon": "📧",
+    "description": "Lets an agent read and draft emails in a connected inbox.",
+    "category": "communication-mcp",
+    "transport": "remote",
+    "is_functional": false
+  },
+  {
+    "slug": "team-chat-connector",
+    "name": "Team Chat Connector",
+    "icon": "💬",
+    "description": "Reads recent channel messages and posts updates to team chat.",
+    "category": "communication-mcp",
+    "transport": "remote",
+    "is_functional": false
+  },
+  {
+    "slug": "calendar-sync-server",
+    "name": "Calendar Sync Server",
+    "icon": "📅",
+    "description": "Reads upcoming events and proposes new calendar invites.",
+    "category": "communication-mcp",
+    "transport": "remote",
+    "is_functional": false
+  },
+  {
+    "slug": "video-call-notes-server",
+    "name": "Video Call Notes Server",
+    "icon": "🎥",
+    "description": "Pulls transcripts and notes from a recorded video call.",
+    "category": "communication-mcp",
+    "transport": "hybrid",
+    "is_functional": false
+  },
+  {
+    "slug": "sms-notification-bridge",
+    "name": "SMS Notification Bridge",
+    "icon": "📱",
+    "description": "Sends short text notifications through a connected messaging provider.",
+    "category": "communication-mcp",
+    "transport": "remote",
+    "is_functional": false
+  },
+  {
+    "slug": "contact-directory-lookup",
+    "name": "Contact Directory Lookup",
+    "icon": "📇",
+    "description": "Looks up contact details from a connected address book.",
+    "category": "communication-mcp",
+    "transport": "remote",
+    "is_functional": false
+  },
+  {
+    "slug": "translation-relay-server",
+    "name": "Translation Relay Server",
+    "icon": "🌍",
+    "description": "Relays text through a translation backend and returns the result.",
+    "category": "communication-mcp",
+    "transport": "remote",
+    "is_functional": false
+  },
+  {
+    "slug": "workflow-trigger-server",
+    "name": "Workflow Trigger Server",
+    "icon": "⚡",
+    "description": "Lets an agent trigger predefined automation workflows.",
+    "category": "automation",
+    "transport": "remote",
+    "is_functional": false
+  },
+  {
+    "slug": "webhook-relay",
+    "name": "Webhook Relay",
+    "icon": "🔗",
+    "description": "Forwards structured events from an agent to an external webhook.",
+    "category": "automation",
+    "transport": "remote",
+    "is_functional": false
+  },
+  {
+    "slug": "cron-job-manager",
+    "name": "Cron Job Manager",
+    "icon": "⏱️",
+    "description": "Lets an agent create and inspect scheduled recurring jobs.",
+    "category": "automation",
+    "transport": "local",
+    "is_functional": false
+  },
+  {
+    "slug": "form-submission-watcher",
+    "name": "Form Submission Watcher",
+    "icon": "📥",
+    "description": "Watches for new form submissions and hands them to an agent.",
+    "category": "automation",
+    "transport": "remote",
+    "is_functional": false
+  },
+  {
+    "slug": "file-sync-connector",
+    "name": "File Sync Connector",
+    "icon": "🔄",
+    "description": "Syncs files between a local directory and a connected cloud drive.",
+    "category": "automation",
+    "transport": "hybrid",
+    "is_functional": false
+  },
+  {
+    "slug": "approval-flow-server",
+    "name": "Approval Flow Server",
+    "icon": "🖊️",
+    "description": "Routes an agent's proposed action through a human approval step.",
+    "category": "automation",
+    "transport": "remote",
+    "is_functional": false
+  },
+  {
+    "slug": "batch-job-runner",
+    "name": "Batch Job Runner",
+    "icon": "🏭",
+    "description": "Queues and runs longer batch jobs on behalf of an agent.",
+    "category": "automation",
+    "transport": "local",
+    "is_functional": false
+  },
+  {
+    "slug": "notification-digest-server",
+    "name": "Notification Digest Server",
+    "icon": "🔔",
+    "description": "Batches scattered notifications into a single periodic digest.",
+    "category": "automation",
+    "transport": "remote",
+    "is_functional": false
+  }
+]

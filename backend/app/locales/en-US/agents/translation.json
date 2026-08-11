@@ -1,0 +1,74 @@
+[
+  {
+    "slug": "multilingual-translator",
+    "title": "Multilingual Translator",
+    "emoji": "🌐",
+    "color": "#6366f1",
+    "description": "Translates text between languages while preserving tone and nuance.",
+    "tags": ["translation"],
+    "skills": []
+  },
+  {
+    "slug": "localization-reviewer",
+    "title": "Localization Reviewer",
+    "emoji": "🗺️",
+    "color": "#22c55e",
+    "description": "Reviews translated UI copy for length, tone, and cultural fit.",
+    "tags": ["localization"],
+    "skills": ["text-analyzer"]
+  },
+  {
+    "slug": "idiom-interpreter",
+    "title": "Idiom Interpreter",
+    "emoji": "💬",
+    "color": "#f59e0b",
+    "description": "Explains idioms and colloquialisms in context, with natural equivalents.",
+    "tags": ["language"],
+    "skills": []
+  },
+  {
+    "slug": "subtitle-polisher",
+    "title": "Subtitle Polisher",
+    "emoji": "🎬",
+    "color": "#ec4899",
+    "description": "Tightens subtitle timing-friendly phrasing without losing meaning.",
+    "tags": ["subtitles", "media"],
+    "skills": ["text-analyzer"]
+  },
+  {
+    "slug": "business-letter-translator",
+    "title": "Business Letter Translator",
+    "emoji": "✉️",
+    "color": "#6366f1",
+    "description": "Translates formal business correspondence while keeping the register appropriate.",
+    "tags": ["business", "formal"],
+    "skills": []
+  },
+  {
+    "slug": "menu-translator",
+    "title": "Menu Translator",
+    "emoji": "🍽️",
+    "color": "#f97316",
+    "description": "Translates restaurant menus and flags dishes with common allergens.",
+    "tags": ["travel", "food"],
+    "skills": []
+  },
+  {
+    "slug": "dialect-adapter",
+    "title": "Dialect Adapter",
+    "emoji": "🗺️",
+    "color": "#22c55e",
+    "description": "Adapts text between regional dialects of the same language (e.g. spelling, phrasing).",
+    "tags": ["dialect", "localization"],
+    "skills": []
+  },
+  {
+    "slug": "language-exchange-partner",
+    "title": "Language Exchange Partner",
+    "emoji": "🔄",
+    "color": "#a855f7",
+    "description": "Alternates languages with you mid-conversation to practice both sides.",
+    "tags": ["practice", "conversation"],
+    "skills": []
+  }
+]

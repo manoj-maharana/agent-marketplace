@@ -1,0 +1,19 @@
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+sqlalchemy==2.0.36
+asyncpg==0.30.0
+aiosqlite==0.20.0
+pydantic==2.10.4
+pydantic-settings==2.7.0
+openai==1.58.1
+httpx==0.28.1
+python-dotenv==1.0.1
+python-multipart==0.0.20
+pytest==8.3.4
+pytest-asyncio==0.25.0
+
+# EXPERIMENTAL - only used by app/routers/experimental_deepagents.py, a
+# prototype chat path evaluated alongside (not instead of) the production
+# Agent.stream() path. Safe to remove along with that router.
+deepagents==0.7.5
+langchain-openai==1.4.3

@@ -1,0 +1,83 @@
+[
+  {
+    "slug": "ad-copy-generator",
+    "title": "Ad Copy Generator",
+    "emoji": "📣",
+    "color": "#f97316",
+    "description": "Generates multiple ad copy variants tuned to a platform and target audience.",
+    "tags": ["ads", "copywriting"],
+    "skills": []
+  },
+  {
+    "slug": "social-media-strategist",
+    "title": "Social Media Strategist",
+    "emoji": "📱",
+    "color": "#3b82f6",
+    "description": "Plans a week of social posts around a campaign theme and goal.",
+    "tags": ["social", "planning"],
+    "skills": ["current-datetime"]
+  },
+  {
+    "slug": "seo-content-planner",
+    "title": "SEO Content Planner",
+    "emoji": "🔍",
+    "color": "#10b981",
+    "description": "Clusters keywords into a content calendar with suggested titles.",
+    "tags": ["seo", "content"],
+    "skills": ["web-search"]
+  },
+  {
+    "slug": "brand-voice-coach",
+    "title": "Brand Voice Coach",
+    "emoji": "🎙️",
+    "color": "#a855f7",
+    "description": "Reviews copy against your brand's tone guidelines and suggests rewrites.",
+    "tags": ["branding", "voice"],
+    "skills": []
+  },
+  {
+    "slug": "campaign-analyst",
+    "title": "Campaign Analyst",
+    "emoji": "📊",
+    "color": "#f59e0b",
+    "description": "Turns rough campaign numbers into a plain-English performance readout.",
+    "tags": ["analytics"],
+    "skills": ["calculator"]
+  },
+  {
+    "slug": "landing-page-copywriter",
+    "title": "Landing Page Copywriter",
+    "emoji": "🖥️",
+    "color": "#6366f1",
+    "description": "Drafts headline, subhead, and section copy for a product landing page.",
+    "tags": ["landing page", "copy"],
+    "skills": []
+  },
+  {
+    "slug": "email-campaign-planner",
+    "title": "Email Campaign Planner",
+    "emoji": "📬",
+    "color": "#14b8a6",
+    "description": "Plans a multi-email drip sequence around a launch or promotion.",
+    "tags": ["email marketing"],
+    "skills": ["current-datetime"]
+  },
+  {
+    "slug": "customer-persona-builder",
+    "title": "Customer Persona Builder",
+    "emoji": "🧑‍🤝‍🧑",
+    "color": "#ec4899",
+    "description": "Builds a detailed target-customer persona from a rough product description.",
+    "tags": ["persona", "research"],
+    "skills": ["web-search"]
+  },
+  {
+    "slug": "pricing-page-advisor",
+    "title": "Pricing Page Advisor",
+    "emoji": "💲",
+    "color": "#22c55e",
+    "description": "Reviews a pricing page structure and suggests clearer tiering and framing.",
+    "tags": ["pricing"],
+    "skills": ["calculator"]
+  }
+]

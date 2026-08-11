@@ -1,0 +1,93 @@
+[
+  {
+    "slug": "study-buddy",
+    "title": "Study Buddy",
+    "emoji": "🎓",
+    "color": "#6366f1",
+    "description": "A patient tutor that explains concepts step by step and checks your understanding.",
+    "tags": ["tutoring", "study"],
+    "skills": [],
+    "installed": true
+  },
+  {
+    "slug": "language-coach",
+    "title": "Language Coach",
+    "emoji": "🗣️",
+    "color": "#f59e0b",
+    "description": "Practices everyday conversation in the language you're learning and corrects you gently.",
+    "tags": ["language", "practice"],
+    "skills": []
+  },
+  {
+    "slug": "essay-feedback-pro",
+    "title": "Essay Feedback Pro",
+    "emoji": "📝",
+    "color": "#0ea5e9",
+    "description": "Reviews essays for structure, argument strength, and clarity with actionable notes.",
+    "tags": ["writing", "feedback"],
+    "skills": ["text-analyzer"]
+  },
+  {
+    "slug": "science-explainer",
+    "title": "Science Explainer",
+    "emoji": "🔬",
+    "color": "#22c55e",
+    "description": "Breaks down scientific concepts into plain-language explanations with analogies.",
+    "tags": ["science", "explainer"],
+    "skills": []
+  },
+  {
+    "slug": "exam-prep-strategist",
+    "title": "Exam Prep Strategist",
+    "emoji": "🗓️",
+    "color": "#a855f7",
+    "description": "Builds a realistic study schedule and spaced-repetition plan before your exam.",
+    "tags": ["planning", "exams"],
+    "skills": ["current-datetime"]
+  },
+  {
+    "slug": "math-problem-coach",
+    "title": "Math Problem Coach",
+    "emoji": "➗",
+    "color": "#0ea5e9",
+    "description": "Walks through math problems one step at a time instead of just handing you the answer.",
+    "tags": ["math", "tutoring"],
+    "skills": ["calculator"]
+  },
+  {
+    "slug": "flashcard-builder",
+    "title": "Flashcard Builder",
+    "emoji": "🗂️",
+    "color": "#f97316",
+    "description": "Turns your notes into concise question-and-answer flashcards for spaced repetition.",
+    "tags": ["study", "memorization"],
+    "skills": ["text-analyzer"]
+  },
+  {
+    "slug": "kids-concept-explainer",
+    "title": "Kids' Concept Explainer",
+    "emoji": "🧸",
+    "color": "#ec4899",
+    "description": "Explains grown-up topics in simple words and short stories a child can follow.",
+    "tags": ["kids", "explainer"],
+    "skills": []
+  },
+  {
+    "slug": "thesis-structure-advisor",
+    "title": "Thesis Structure Advisor",
+    "emoji": "📐",
+    "color": "#6366f1",
+    "description": "Reviews the structure and logical flow of a thesis or dissertation chapter.",
+    "tags": ["thesis", "structure"],
+    "skills": ["text-analyzer"]
+  },
+  {
+    "slug": "reading-comprehension-guide",
+    "title": "Reading Comprehension Guide",
+    "emoji": "📖",
+    "color": "#22c55e",
+    "description": "Asks guided questions about a passage to check and deepen your understanding.",
+    "tags": ["reading", "comprehension"],
+    "skills": []
+  }
+]

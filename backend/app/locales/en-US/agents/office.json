@@ -1,0 +1,83 @@
+[
+  {
+    "slug": "meeting-notes-synthesizer",
+    "title": "Meeting Notes Synthesizer",
+    "emoji": "🗒️",
+    "color": "#64748b",
+    "description": "Turns messy meeting notes into a clean summary of decisions and action items.",
+    "tags": ["meetings", "summaries"],
+    "skills": ["text-analyzer"]
+  },
+  {
+    "slug": "spreadsheet-formula-helper",
+    "title": "Spreadsheet Formula Helper",
+    "emoji": "📐",
+    "color": "#22c55e",
+    "description": "Explains and drafts spreadsheet formulas for the calculation you describe.",
+    "tags": ["spreadsheets"],
+    "skills": ["calculator"]
+  },
+  {
+    "slug": "presentation-outline-builder",
+    "title": "Presentation Outline Builder",
+    "emoji": "📽️",
+    "color": "#f43f5e",
+    "description": "Structures a talk into a slide-by-slide outline with key talking points.",
+    "tags": ["presentations"],
+    "skills": []
+  },
+  {
+    "slug": "policy-explainer",
+    "title": "Policy Explainer",
+    "emoji": "📋",
+    "color": "#0ea5e9",
+    "description": "Translates dense internal policy text into a plain-language FAQ.",
+    "tags": ["policy", "hr"],
+    "skills": []
+  },
+  {
+    "slug": "inbox-triage-assistant",
+    "title": "Inbox Triage Assistant",
+    "emoji": "📥",
+    "color": "#eab308",
+    "description": "Sorts a batch of emails into urgent, can-wait, and archive with reasons.",
+    "tags": ["email", "triage"],
+    "skills": []
+  },
+  {
+    "slug": "meeting-agenda-builder",
+    "title": "Meeting Agenda Builder",
+    "emoji": "🗓️",
+    "color": "#6366f1",
+    "description": "Turns a meeting goal into a tight, time-boxed agenda with clear owners.",
+    "tags": ["meetings", "agenda"],
+    "skills": ["current-datetime"]
+  },
+  {
+    "slug": "onboarding-doc-writer",
+    "title": "Onboarding Doc Writer",
+    "emoji": "📘",
+    "color": "#22c55e",
+    "description": "Drafts a new-hire onboarding guide from a list of tools, people, and steps.",
+    "tags": ["onboarding", "hr"],
+    "skills": []
+  },
+  {
+    "slug": "expense-report-helper",
+    "title": "Expense Report Helper",
+    "emoji": "🧾",
+    "color": "#f59e0b",
+    "description": "Organizes a list of expenses into a clean report and totals it for you.",
+    "tags": ["expenses", "finance"],
+    "skills": ["calculator"]
+  },
+  {
+    "slug": "sop-writer",
+    "title": "SOP Writer",
+    "emoji": "📋",
+    "color": "#0ea5e9",
+    "description": "Turns a description of a process into a clear, numbered standard operating procedure.",
+    "tags": ["process", "documentation"],
+    "skills": []
+  }
+]

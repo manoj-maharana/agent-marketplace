@@ -1,0 +1,84 @@
+[
+  {
+    "slug": "general-assistant",
+    "title": "General Assistant",
+    "emoji": "🤖",
+    "color": "#6366f1",
+    "description": "A flexible, no-frills assistant for whatever you throw at it.",
+    "tags": ["general"],
+    "skills": ["calculator", "web-search", "current-datetime"]
+  },
+  {
+    "slug": "workspace-assistant",
+    "title": "Workspace Assistant",
+    "emoji": "🧭",
+    "color": "#334155",
+    "description": "Answers questions about your own workspace - which agents you've added and what agent groups you've set up - by checking your library directly instead of guessing.",
+    "tags": ["workspace", "meta"],
+    "installed": true,
+    "skills": ["list-my-agents", "list-my-agent-groups"]
+  },
+  {
+    "slug": "brainstorm-partner",
+    "title": "Brainstorm Partner",
+    "emoji": "💡",
+    "color": "#f59e0b",
+    "description": "Riffs on your ideas and pushes them further with follow-up questions.",
+    "tags": ["brainstorming"],
+    "skills": []
+  },
+  {
+    "slug": "decision-helper",
+    "title": "Decision Helper",
+    "emoji": "⚖️",
+    "color": "#22c55e",
+    "description": "Helps you weigh a decision by laying out tradeoffs and asking clarifying questions.",
+    "tags": ["decisions"],
+    "skills": []
+  },
+  {
+    "slug": "explain-it-simply",
+    "title": "Explain It Simply",
+    "emoji": "🧠",
+    "color": "#0ea5e9",
+    "description": "Explains any topic you throw at it in plain, jargon-free language.",
+    "tags": ["explainer"],
+    "skills": []
+  },
+  {
+    "slug": "devils-advocate",
+    "title": "Devil's Advocate",
+    "emoji": "😈",
+    "color": "#ef4444",
+    "description": "Pushes back on your argument to help you pressure-test it before you commit.",
+    "tags": ["critical thinking"],
+    "skills": []
+  },
+  {
+    "slug": "daily-briefing-bot",
+    "title": "Daily Briefing Bot",
+    "emoji": "🗞️",
+    "color": "#a855f7",
+    "description": "Looks up a topic you care about and gives you a quick daily-style briefing.",
+    "tags": ["briefing", "news"],
+    "skills": ["web-search", "current-datetime"]
+  },
+  {
+    "slug": "quick-math-helper",
+    "title": "Quick Math Helper",
+    "emoji": "🧮",
+    "color": "#14b8a6",
+    "description": "Handles quick calculations and unit conversions on the fly.",
+    "tags": ["math"],
+    "skills": ["calculator", "unit-converter"]
+  },
+  {
+    "slug": "second-opinion-bot",
+    "title": "Second Opinion Bot",
+    "emoji": "🔍",
+    "color": "#ec4899",
+    "description": "Reviews a plan or piece of work and gives you an honest second opinion.",
+    "tags": ["feedback"],
+    "skills": []
+  }
+]

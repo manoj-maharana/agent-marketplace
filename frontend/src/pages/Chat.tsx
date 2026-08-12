@@ -12,18 +12,15 @@ import {
 } from "@/api/chat";
 import { ChatMessage } from "@/components/ChatMessage";
 import { ChatSidebar } from "@/components/ChatSidebar";
+import { LoadingIndicator } from "@/components/chat/LoadingIndicator";
+import { StreamingMessage } from "@/components/chat/StreamingMessage";
+import { ToolTrace, type ToolTraceEvent } from "@/components/chat/ToolTrace";
 import { Composer } from "@/components/Composer";
 import { KnowledgeModal } from "@/components/KnowledgeModal";
 import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
 import { Spinner } from "@/components/ui/Spinner";
-import { Tag } from "@/components/ui/Tag";
 import { cn } from "@/lib/cn";
-
-interface ToolEvent {
-  name: string;
-  status: "calling" | "done";
-}
 
 export function Chat() {
   const { agentId, conversationId: conversationIdParam } = useParams<{
@@ -44,7 +41,7 @@ export function Chat() {
 
   const [optimisticUser, setOptimisticUser] = useState<string | null>(null);
   const [streamingText, setStreamingText] = useState<string | null>(null);
-  const [toolEvents, setToolEvents] = useState<ToolEvent[]>([]);
+  const [toolEvents, setToolEvents] = useState<ToolTraceEvent[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
   const [knowledgeOpen, setKnowledgeOpen] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
@@ -113,10 +110,12 @@ export function Chat() {
         if (event.type === "token") {
           setStreamingText((prev) => (prev ?? "") + event.content);
         } else if (event.type === "tool_call") {
-          setToolEvents((prev) => [...prev, { name: event.name, status: "calling" }]);
+          setToolEvents((prev) => [...prev, { name: event.name, status: "calling", arguments: event.arguments }]);
         } else if (event.type === "tool_result") {
           setToolEvents((prev) =>
-            prev.map((t) => (t.name === event.name && t.status === "calling" ? { ...t, status: "done" } : t)),
+            prev.map((t) =>
+              t.name === event.name && t.status === "calling" ? { ...t, status: "done", result: event.result } : t,
+            ),
           );
         } else if (event.type === "done") {
           setStreamingText(event.content);
@@ -245,24 +244,42 @@ export function Chat() {
                 </div>
               ) : (
                 <div className="divide-y divide-border/60 pb-4">
-                  {messagesQuery.data?.map((m) => (
-                    <ChatMessage key={m.id} role={m.role as "user" | "assistant"} content={m.content} agent={agent} />
-                  ))}
+                  {messagesQuery.data?.map((m, idx) => {
+                    const isLastAssistant =
+                      m.role === "assistant" && idx === (messagesQuery.data?.length ?? 0) - 1;
+                    const precedingUser = isLastAssistant
+                      ? [...(messagesQuery.data ?? [])].slice(0, idx).reverse().find((x) => x.role === "user")
+                      : undefined;
+                    return (
+                      <ChatMessage
+                        key={m.id}
+                        role={m.role as "user" | "assistant"}
+                        content={m.content}
+                        agent={agent}
+                        onRetry={
+                          isLastAssistant && precedingUser && !isStreaming
+                            ? () => handleSend(precedingUser.content)
+                            : undefined
+                        }
+                      />
+                    );
+                  })}
                   {optimisticUser && <ChatMessage role="user" content={optimisticUser} agent={agent} />}
                   {isStreaming && (
                     <div>
-                      {toolEvents.length > 0 && (
-                        <div className="flex flex-wrap gap-2 px-6 pt-3">
-                          {toolEvents.map((t, i) => (
-                            <Tag key={i} tone={t.status === "done" ? "success" : "accent"}>
-                              <Wrench className="size-3" />
-                              {t.name}
-                              {t.status === "calling" ? "…" : " done"}
-                            </Tag>
-                          ))}
+                      {!streamingText && toolEvents.length === 0 && (
+                        <LoadingIndicator label={`${agent.title} is thinking`} />
+                      )}
+                      <ToolTrace events={toolEvents} />
+                      {!!streamingText && (
+                        <div className="flex items-start gap-3 px-6 py-4">
+                          <Avatar emoji={agent.avatar_emoji} color={agent.avatar_color} size={32} className="rounded-full" />
+                          <div className="min-w-0 flex-1 pt-1">
+                            <p className="mb-1 text-xs font-medium text-text-faint">{agent.title}</p>
+                            <StreamingMessage content={streamingText} streaming={isStreaming} />
+                          </div>
                         </div>
                       )}
-                      <ChatMessage role="assistant" content={streamingText ?? ""} agent={agent} />
                     </div>
                   )}
                 </div>

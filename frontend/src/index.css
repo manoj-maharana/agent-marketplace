@@ -108,3 +108,90 @@ body {
 .animate-pulse-dot {
   animation: pulse-dot 1.2s ease-in-out infinite;
 }
+
+/* ─────────────────────────────────────────────────────────
+ * Chat trace tokens — aliases onto the theme palette above so
+ * the beautifui-style chat components (LoadingIndicator,
+ * ToolTrace, StreamingMessage) stay in sync with light/dark
+ * mode without a second color system.
+ * ───────────────────────────────────────────────────────── */
+@theme {
+  --color-ink: var(--color-text);
+  --color-ink-2: var(--color-text-muted);
+  --color-ink-3: var(--color-text-faint);
+  --color-line: var(--color-border);
+  --color-line-strong: var(--color-border-strong);
+  --color-hover: var(--color-surface-hover);
+  --color-inset: var(--color-surface-raised);
+}
+
+@keyframes shimmer-text {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes stream-in {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+@keyframes pixel-on {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shimmer-label,
+  .pixel-cell,
+  .stream-word {
+    animation: none !important;
+  }
+}

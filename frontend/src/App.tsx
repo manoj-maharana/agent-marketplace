@@ -1,20 +1,37 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { Sidebar } from "@/components/Sidebar";
 import { TopBar } from "@/components/TopBar";
 import { AgentDetail } from "@/pages/AgentDetail";
 import { AgentGroupChat } from "@/pages/AgentGroupChat";
 import { AgentGroups } from "@/pages/AgentGroups";
 import { AgentMarketplace } from "@/pages/AgentMarketplace";
+import { AssistantHome } from "@/pages/AssistantHome";
 import { Chat } from "@/pages/Chat";
 import { CreateAgent } from "@/pages/CreateAgent";
 import { CreateAgentGroup } from "@/pages/CreateAgentGroup";
 import { EditAgent } from "@/pages/EditAgent";
 import { Home } from "@/pages/Home";
+import { Landing } from "@/pages/Landing";
 import { McpDetail } from "@/pages/McpDetail";
 import { McpMarketplace } from "@/pages/McpMarketplace";
 import { SkillMarketplace } from "@/pages/SkillMarketplace";
 
+// These two pages own their full-page layout (own sidebar or none at all) -
+// they don't render inside the marketplace app shell below.
+const STANDALONE_ROUTES = ["/", "/assistant"];
+
 export default function App() {
+  const location = useLocation();
+
+  if (STANDALONE_ROUTES.includes(location.pathname)) {
+    return (
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/assistant" element={<AssistantHome />} />
+      </Routes>
+    );
+  }
+
   return (
     <div className="flex h-screen w-screen flex-col overflow-hidden bg-bg text-text">
       <TopBar />
@@ -22,7 +39,6 @@ export default function App() {
         <Sidebar />
         <main className="min-w-0 flex-1 overflow-hidden">
           <Routes>
-            <Route path="/" element={<Navigate to="/home" replace />} />
             <Route path="/home" element={<Home />} />
             <Route path="/agents" element={<AgentMarketplace />} />
             <Route path="/agents/new" element={<CreateAgent />} />

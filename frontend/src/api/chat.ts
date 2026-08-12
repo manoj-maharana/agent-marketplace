@@ -10,6 +10,14 @@ export function useConversations(agentId: number | undefined) {
   });
 }
 
+/** All conversations across every agent, most recently updated first. */
+export function useAllConversations() {
+  return useQuery({
+    queryKey: ["conversations", "all"],
+    queryFn: () => api.get<Conversation[]>("/chat/conversations"),
+  });
+}
+
 export function useMessages(conversationId: number | undefined) {
   return useQuery({
     queryKey: ["messages", conversationId],

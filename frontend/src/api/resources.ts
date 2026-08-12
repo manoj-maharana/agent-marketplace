@@ -33,6 +33,28 @@ export function useDeleteResource() {
   });
 }
 
+export function useAttachResource() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ resourceId, agentId }: { resourceId: number; agentId: number }) =>
+      api.post<Resource>(`/resources/${resourceId}/attach`, { agent_id: agentId }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["resources"] });
+    },
+  });
+}
+
+export function useDetachResource() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ resourceId, agentId }: { resourceId: number; agentId: number }) =>
+      api.del<Resource>(`/resources/${resourceId}/attach/${agentId}`),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["resources"] });
+    },
+  });
+}
+
 export function resourceDownloadUrl(resourceId: number): string {
   return `${BASE_URL}/resources/${resourceId}/download`;
 }

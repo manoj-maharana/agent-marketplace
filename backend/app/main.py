@@ -11,7 +11,6 @@ from app.routers import (
     chat,
     experimental_agent_groups,
     experimental_deepagents,
-    knowledge,
     mcp,
     resources,
     skills,
@@ -44,7 +43,6 @@ app.include_router(agents.router)
 app.include_router(skills.router)
 app.include_router(chat.router)
 app.include_router(assistant.router)
-app.include_router(knowledge.router)
 app.include_router(resources.router)
 app.include_router(tasks.router)
 app.include_router(mcp.router)

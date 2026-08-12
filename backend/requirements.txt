@@ -11,6 +11,9 @@ python-dotenv==1.0.1
 python-multipart==0.0.20
 azure-storage-blob==12.30.0
 aiohttp==3.14.3  # async transport required by azure-storage-blob's aio client
+pypdf==6.15.0
+python-docx==1.2.0
+pgvector==0.5.0
 pytest==8.3.4
 pytest-asyncio==0.25.0
 

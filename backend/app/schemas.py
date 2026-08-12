@@ -252,20 +252,19 @@ class TaskUpdate(BaseModel):
 
 
 class ResourceOut(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
     id: int
     filename: str
     content_type: str
     size_bytes: int
-    created_at: datetime
-
-
-class KnowledgeFileOut(BaseModel):
-    id: int
-    filename: str
+    is_processed: bool
+    processing_error: str | None
     chunk_count: int
+    attached_agent_ids: list[int] = Field(default_factory=list)
     created_at: datetime
+
+
+class ResourceAttachRequest(BaseModel):
+    agent_id: int
 
 
 class ConversationOut(BaseModel):

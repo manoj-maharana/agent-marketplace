@@ -97,13 +97,6 @@ export interface AgentUpdatePayload {
   skill_ids?: number[];
 }
 
-export interface KnowledgeFile {
-  id: number;
-  filename: string;
-  chunk_count: number;
-  created_at: string;
-}
-
 export interface Conversation {
   id: number;
   agent_id: number;
@@ -187,6 +180,10 @@ export interface Resource {
   filename: string;
   content_type: string;
   size_bytes: number;
+  is_processed: boolean;
+  processing_error: string | null;
+  chunk_count: number;
+  attached_agent_ids: number[];
   created_at: string;
 }
 

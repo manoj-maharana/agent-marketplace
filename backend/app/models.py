@@ -254,10 +254,13 @@ class TaskRun(Base):
 
 
 class Resource(Base):
-    """A workspace-level file (PDF/Word/PPT/Excel/etc), stored as a raw blob in
-    Azure Blob Storage - distinct from KnowledgeFile below, which only stores
-    derived text chunks/embeddings for a single agent's RAG context. Not tied
-    to any one agent; anyone in the workspace can see and download it."""
+    """A workspace-level file (PDF/Word/PPT/Excel/Markdown/text/CSV), stored as
+    a raw blob in Azure Blob Storage. Anyone in the workspace can see and
+    download it, and it can be attached (ResourceAgent, below) to any number
+    of agents for RAG - one upload, reusable across agents, rather than the
+    old per-agent-only Knowledge feature this replaces. Attaching a resource
+    triggers extraction + chunking + embedding (ResourceChunk) the first time;
+    is_processed/processing_error track that."""
 
     __tablename__ = "resources"
 
@@ -266,33 +269,45 @@ class Resource(Base):
     content_type: Mapped[str] = mapped_column(String(120), default="application/octet-stream")
     size_bytes: Mapped[int] = mapped_column(Integer, default=0)
     blob_name: Mapped[str] = mapped_column(String(255), unique=True)
+    is_processed: Mapped[bool] = mapped_column(Boolean, default=False)
+    processing_error: Mapped[str | None] = mapped_column(String(500), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
-
-class KnowledgeFile(Base):
-    __tablename__ = "knowledge_files"
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    agent_id: Mapped[int] = mapped_column(ForeignKey("agents.id", ondelete="CASCADE"), index=True)
-    filename: Mapped[str] = mapped_column(String(255))
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
-
-    chunks: Mapped[list["KnowledgeChunk"]] = relationship(
-        back_populates="file", cascade="all, delete-orphan", lazy="selectin"
+    chunks: Mapped[list["ResourceChunk"]] = relationship(
+        back_populates="resource", cascade="all, delete-orphan", lazy="selectin"
+    )
+    agent_links: Mapped[list["ResourceAgent"]] = relationship(
+        back_populates="resource", cascade="all, delete-orphan", lazy="selectin"
     )
 
 
-class KnowledgeChunk(Base):
-    __tablename__ = "knowledge_chunks"
+class ResourceChunk(Base):
+    __tablename__ = "resource_chunks"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    file_id: Mapped[int] = mapped_column(
-        ForeignKey("knowledge_files.id", ondelete="CASCADE"), index=True
-    )
-    agent_id: Mapped[int] = mapped_column(ForeignKey("agents.id", ondelete="CASCADE"), index=True)
+    resource_id: Mapped[int] = mapped_column(ForeignKey("resources.id", ondelete="CASCADE"), index=True)
     chunk_index: Mapped[int] = mapped_column(Integer)
     content: Mapped[str] = mapped_column(Text)
+    # Portable canonical storage (works on SQLite and Postgres alike). On
+    # Postgres, app/framework/vector_search.py also mirrors this into a real
+    # pgvector column via raw SQL for genuine ANN search - see that module's
+    # docstring for why it's raw SQL rather than a mapped column here.
     embedding: Mapped[list[float]] = mapped_column(JSON)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
-    file: Mapped[KnowledgeFile] = relationship(back_populates="chunks")
+    resource: Mapped[Resource] = relationship(back_populates="chunks")
+
+
+class ResourceAgent(Base):
+    """Many-to-many: which agents a resource is attached to for RAG."""
+
+    __tablename__ = "resource_agents"
+
+    resource_id: Mapped[int] = mapped_column(
+        ForeignKey("resources.id", ondelete="CASCADE"), primary_key=True
+    )
+    agent_id: Mapped[int] = mapped_column(ForeignKey("agents.id", ondelete="CASCADE"), primary_key=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+    resource: Mapped[Resource] = relationship(back_populates="agent_links")
+    agent: Mapped["Agent"] = relationship(lazy="joined")

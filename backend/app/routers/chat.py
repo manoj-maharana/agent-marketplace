@@ -7,9 +7,9 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db import async_session_factory, get_db
+from app.framework import vector_search
 from app.framework.agent import Agent as RuntimeAgent
-from app.framework.chunking import top_k_by_similarity
-from app.models import Agent, Conversation, KnowledgeChunk, Message, utcnow
+from app.models import Agent, Conversation, Message, ResourceAgent, utcnow
 from app.schemas import ConversationCreate, ConversationOut, MessageCreate, MessageOut
 from app.services.embeddings import EmbeddingsNotConfigured, embed_texts
 
@@ -90,17 +90,16 @@ async def send_message(
     runtime_agent = RuntimeAgent.from_db(agent)
 
     extra_context: str | None = None
-    chunk_stmt = select(KnowledgeChunk).where(KnowledgeChunk.agent_id == agent.id)
-    chunks = (await db.execute(chunk_stmt)).scalars().all()
-    if chunks:
+    resource_ids_stmt = select(ResourceAgent.resource_id).where(ResourceAgent.agent_id == agent.id)
+    resource_ids = [r for r, in (await db.execute(resource_ids_stmt)).all()]
+    if resource_ids:
         try:
             [query_embedding] = await embed_texts([payload.content])
-            relevant = top_k_by_similarity(
-                query_embedding, [(c.content, c.embedding) for c in chunks], k=4
-            )
-            extra_context = "Relevant context from the agent's uploaded files:\n\n" + "\n\n---\n\n".join(
-                relevant
-            )
+            relevant = await vector_search.search_chunks(db, resource_ids, query_embedding, k=4)
+            if relevant:
+                extra_context = "Relevant context from the agent's attached resources:\n\n" + "\n\n---\n\n".join(
+                    relevant
+                )
         except EmbeddingsNotConfigured:
             pass  # chat still works without RAG context if embeddings aren't configured
 

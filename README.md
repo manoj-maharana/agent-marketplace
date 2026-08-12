@@ -7,10 +7,10 @@ React + TypeScript frontend, FastAPI backend, PostgreSQL, and Azure OpenAI for t
 - **Skill Marketplace** — browse tools ("skills") agents can call mid-conversation. Skills tagged **Live** are wired up end to end (calculator, web search, unit converter, text analyzer, current date/time); the rest are catalog entries you can extend.
 - **Chat** — pick any agent from your library and chat with it. Responses stream token-by-token; when an agent has Live skills enabled, it can call them mid-answer (Azure OpenAI function/tool calling) and you'll see the tool call happen live.
 - **Create Agent** — define your own agent: name, avatar, category, system prompt, temperature, and which skills it can use (an agent can have any number of skills — it's a many-to-many relationship, not a single pick). It's chat-ready immediately.
-- **Assistant** (`/assistant`) — a chat-first home page separate from picking one agent. Type anything and an LLM routing pass (`backend/app/framework/assistant_router.py`) decides which of your library agents should handle it — one agent for a single clear ask, several in parallel for independent sub-tasks, or a chain where one agent's output feeds the next. Every delegated agent streams its own contribution live; multi-agent turns get a final synthesized answer. See `AssistantThread`/`AssistantMessage` in `models.py` and `routers/assistant.py`.
+- **Assistant** (`/assistant`) — a chat-first home page separate from picking one agent. Type anything and an LLM routing pass (`backend/app/framework/assistant_router.py`) decides which of your library agents should handle it — one agent for a single clear ask (the common case), several in parallel for independent sub-tasks, or a chain where one agent's output feeds the next. The planner sees each agent's category, description, skills, and whether it has relevant attached documents, and is told to scale the plan to the task rather than defaulting to multi-agent. Every delegated agent streams its own contribution live and can draw on its attached Resources; multi-agent turns get a final synthesized answer. See `AssistantThread`/`AssistantMessage` in `models.py` and `routers/assistant.py`.
 - **Tasks** (`/assistant/tasks`) — one-off checklist items, or hand a task to an agent on a daily/weekly recurrence. Recurring tasks are checked *lazily*: `POST /api/tasks/check-due` runs whenever the Tasks page is opened (see `AssistantHome`'s/`Tasks`' mount effect), not via a server-side cron job — a task only fires once someone has the app open at/after its due time. Upgrading to real server-side scheduling (e.g. an Azure Container Apps Job on a Schedule trigger) is a mechanical follow-up if that limitation ever matters.
-- **Resources** (`/assistant/resources`) — workspace-level file storage (PDF, Word, PPT, Excel, Markdown, text, CSV), stored as raw blobs in Azure Blob Storage (`backend/app/services/blob_storage.py`) — distinct from the per-agent Knowledge base below, which only keeps derived text chunks for RAG, never the original file.
-- **Knowledge base** — attach `.txt`/`.md` files to a specific agent (via its chat page) for retrieval-augmented answers; needs an Azure OpenAI embeddings deployment.
+- **Resources** (`/assistant/resources`) — workspace-level file storage (PDF, Word, PPT, Excel, Markdown, text, CSV), stored as raw blobs in Azure Blob Storage (`backend/app/services/blob_storage.py`). Every upload is extracted (`backend/app/framework/document_extract.py` — `pypdf`/`python-docx`; plain text only, no OCR, so scanned PDFs won't extract), chunked, and embedded automatically, then can be **attached to any number of agents** (`ResourceAgent`, a many-to-many join) for retrieval-augmented answers in both regular chat and the Assistant router — one upload, reusable everywhere, rather than a separate upload per agent. Needs an Azure OpenAI embeddings deployment; without one, files still upload and stay downloadable, they just won't be searchable until it's configured.
+- **Vector search** (`backend/app/framework/vector_search.py`) — on Postgres, chunk embeddings are mirrored into a real `pgvector` column and searched with its `<=>` cosine-distance operator (genuine ANN, not a Python loop). On SQLite (local dev only), it falls back to loading candidate chunks and scoring them in Python — fine at this app's scale, and it never has to serve production traffic. Embeddings are always requested at a fixed 1536 dimensions so the vector column width is stable regardless of which embedding model is configured.
 
 No user accounts in v1 — it's a single-user local app. Auth can be layered on later.
 
@@ -186,11 +186,15 @@ containerapp update`, not `azure/webapps-deploy`.
    separately.
 4. **Azure Portal → Container Apps → your app → Containers → Environment variables**, fill in the
    values the script left blank (these are real secrets — set them here, never in GitHub or in
-   code): `AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_API_KEY`, and (only if you want the Resources
-   feature working in production) `AZURE_STORAGE_CONNECTION_STRING` from an Azure Storage account
-   — any Storage V2 account works, create a private blob container in it named to match
-   `AZURE_STORAGE_CONTAINER` (defaults to `resources`). Without it, uploads just return a clear
-   "not configured" error — nothing else breaks.
+   code): `AZURE_OPENAI_ENDPOINT` (the base resource URL only, e.g.
+   `https://your-resource.cognitiveservices.azure.com` — not a full deployment/chat-completions
+   URL, which the SDK will otherwise double up and start rejecting every request with confusing
+   400s), `AZURE_OPENAI_API_KEY`, and optionally `AZURE_OPENAI_EMBEDDING_DEPLOYMENT` (needed for
+   Resources/RAG search to work — without it, files still upload and stay downloadable, they just
+   won't be searchable) and `AZURE_STORAGE_CONNECTION_STRING` from an Azure Storage account for
+   the Resources feature — any Storage V2 account works, create a private blob container in it
+   named to match `AZURE_STORAGE_CONTAINER` (defaults to `resources`). Any of these left unset
+   just returns a clear "not configured" error from the affected feature — nothing else breaks.
 5. Confirm: `https://<your-app>.<random>.<region>.azurecontainerapps.io/health` should return
    `{"status":"ok","azure_openai_configured":true}`.
 

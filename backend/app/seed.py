@@ -14,7 +14,7 @@ from pathlib import Path
 from sqlalchemy import select
 
 from app.db import Base, async_session_factory, engine
-from app.framework import skill_loader
+from app.framework import skill_loader, vector_search
 from app.models import Agent, Category, McpServer, Skill
 
 LOCALE = "en-US"
@@ -31,6 +31,8 @@ async def seed() -> None:
         await conn.run_sync(Base.metadata.create_all)
 
     async with async_session_factory() as db:
+        await vector_search.ensure_pgvector_ready(db)
+
         existing = (await db.execute(select(Category.id))).first()
         if existing:
             return

@@ -539,27 +539,85 @@ def test_agent_group_run_without_azure_config_returns_400():
         assert "not configured" in run_resp.json()["detail"]
 
 
-def test_knowledge_upload_without_embeddings_configured():
+def _make_resource_row(blob_name: str) -> int:
+    """Test-only helper: constructs a Resource row directly, bypassing the
+    upload endpoint (which needs real Azure Blob Storage - not configured in
+    tests) so attach/detach and processing logic can still be exercised."""
+    import asyncio
+
+    from app.db import async_session_factory
+    from app.models import Resource
+
+    async def make():
+        async with async_session_factory() as db:
+            r = Resource(filename="notes.txt", content_type="text/plain", size_bytes=10, blob_name=blob_name)
+            db.add(r)
+            await db.commit()
+            await db.refresh(r)
+            return r.id
+
+    return asyncio.run(make())
+
+
+def test_resource_attach_and_detach_to_agent():
     with TestClient(app) as client:
         agents = client.get("/api/agents", params={"q": "Study Buddy"}).json()["items"]
         agent_id = agents[0]["id"]
+        resource_id = _make_resource_row("test-blob-attach")
 
-        resp = client.post(
-            f"/api/agents/{agent_id}/knowledge",
-            files={"file": ("notes.txt", b"Some study notes.", "text/plain")},
-        )
-        assert resp.status_code == 400
-        assert "not configured" in resp.json()["detail"]
+        attach_resp = client.post(f"/api/resources/{resource_id}/attach", json={"agent_id": agent_id})
+        assert attach_resp.status_code == 200
+        assert agent_id in attach_resp.json()["attached_agent_ids"]
+
+        listing = client.get("/api/resources").json()
+        item = next(r for r in listing if r["id"] == resource_id)
+        assert agent_id in item["attached_agent_ids"]
+
+        detach_resp = client.delete(f"/api/resources/{resource_id}/attach/{agent_id}")
+        assert detach_resp.status_code == 200
+        assert agent_id not in detach_resp.json()["attached_agent_ids"]
 
 
-def test_knowledge_upload_rejects_unsupported_extension():
+def test_resource_attach_rejects_unknown_agent():
     with TestClient(app) as client:
-        agents = client.get("/api/agents", params={"q": "Study Buddy"}).json()["items"]
-        agent_id = agents[0]["id"]
+        resource_id = _make_resource_row("test-blob-attach-bad-agent")
+        resp = client.post(f"/api/resources/{resource_id}/attach", json={"agent_id": 999999})
+        assert resp.status_code == 404
 
-        resp = client.post(
-            f"/api/agents/{agent_id}/knowledge",
-            files={"file": ("notes.pdf", b"%PDF-1.4", "application/pdf")},
-        )
-        assert resp.status_code == 400
-        assert "txt" in resp.json()["detail"]
+
+def test_resource_processing_sets_error_without_blob_storage_configured():
+    import asyncio
+
+    from app.db import async_session_factory
+    from app.framework.resource_processing import process_resource
+    from app.models import Resource
+
+    async def run():
+        async with async_session_factory() as db:
+            r = Resource(
+                filename="notes.txt", content_type="text/plain", size_bytes=10, blob_name="unconfigured-blob"
+            )
+            db.add(r)
+            await db.commit()
+            await db.refresh(r)
+            await process_resource(db, r)
+            return r.is_processed, r.processing_error
+
+    is_processed, error = asyncio.run(run())
+    assert is_processed is False
+    assert error is not None
+
+
+def test_document_extract_text_docx_and_unsupported():
+    import pytest
+
+    from app.framework.document_extract import ExtractionNotSupported, extract_text
+
+    assert extract_text("notes.txt", b"hello world") == "hello world"
+    assert extract_text("notes.md", "# Title\nBody".encode()) == "# Title\nBody"
+
+    with pytest.raises(ExtractionNotSupported):
+        extract_text("virus.exe", b"binary junk")
+
+    with pytest.raises(ExtractionNotSupported):
+        extract_text("broken.pdf", b"not actually a pdf")

@@ -22,17 +22,24 @@ if TYPE_CHECKING:
     from app.models import Agent as AgentRow
 
 ROUTER_SYSTEM_PROMPT = """You are the routing planner for a multi-agent assistant workspace.
-Given the user's message and a list of the specialist agents available in their library, decide
-which agent(s) should handle it and how they should collaborate.
+Given the user's message and a list of the specialist agents available in their library - each
+with its category, description, the skills/tools it can call, and whether it has relevant
+attached documents - decide which agent(s) should handle it and how they should collaborate.
 
 Respond with ONLY a JSON object of this exact shape, no other text:
 {"mode": "single" | "parallel" | "sequential", "agent_ids": [<int>, ...], "reason": "<one short sentence>"}
 
 Rules:
+- Scale the plan to the task. Most requests are simple - one competent agent, "single" mode. Only
+  reach for "parallel" or "sequential" when the request genuinely has multiple distinct facets or
+  a real hand-off (e.g. research something, then write it up) that one agent can't do as well alone.
+  Don't split a task across agents just because you can.
 - "single": exactly one agent is clearly the right fit for the whole request.
 - "parallel": the request has multiple independent facets that different agents can each tackle
   on their own at the same time (their answers get combined into one final reply afterward).
 - "sequential": one agent's output should become input to the next (e.g. research, then write).
+- Prefer an agent whose attached documents look relevant to the question over one that doesn't
+  have them, all else equal - it can ground its answer in real material instead of guessing.
 - Only use agent ids from the list you were given. Pick 1 to 3 agents, never more, never zero.
 - If nothing is a great fit, pick the single closest agent rather than refusing.
 """
@@ -43,7 +50,16 @@ and each delegated specialist's contribution. Write one clear, well-organized re
 all of it - don't just concatenate the contributions, and don't mention this synthesis step itself."""
 
 
-async def plan_route(message: str, agents: list["AgentRow"]) -> dict:
+def _agent_profile(agent: "AgentRow", has_kb: bool) -> str:
+    category = agent.category.name if agent.category else "general"
+    skills = ", ".join(s.name for s in agent.skills) if agent.skills else "none"
+    kb_note = " Has relevant attached documents." if has_kb else ""
+    return f"- id={agent.id}: {agent.title} [{category}] - {agent.description} Skills: {skills}.{kb_note}"
+
+
+async def plan_route(
+    message: str, agents: list["AgentRow"], agents_with_kb: set[int] | None = None
+) -> dict:
     """Decides which library agent(s) should handle `message`. Falls back to
     the first agent in "single" mode if Azure OpenAI isn't configured or the
     model's response can't be parsed - routing always resolves to *something*
@@ -56,7 +72,8 @@ async def plan_route(message: str, agents: list["AgentRow"]) -> dict:
     if not settings.azure_openai_configured:
         return {"mode": "single", "agent_ids": [agents[0].id], "reason": "Default routing."}
 
-    catalog = "\n".join(f"- id={a.id}: {a.title} - {a.description}" for a in agents)
+    agents_with_kb = agents_with_kb or set()
+    catalog = "\n".join(_agent_profile(a, a.id in agents_with_kb) for a in agents)
     try:
         client = get_client()
         resp = await client.chat.completions.create(
@@ -111,7 +128,10 @@ async def _synthesize(message: str, contributions: list[dict]) -> AsyncGenerator
 
 
 async def run_assistant_turn(
-    message: str, agents_by_id: dict[int, "AgentRow"], plan: dict
+    message: str,
+    agents_by_id: dict[int, "AgentRow"],
+    plan: dict,
+    resource_context_by_agent: dict[int, str] | None = None,
 ) -> AsyncGenerator[dict, None]:
     """Yields route -> {agent_start, agent_token, agent_done}* -> [synthesis token]* -> done | error.
 
@@ -119,6 +139,7 @@ async def run_assistant_turn(
     caller to persist what happened - which agents ran and what each of them said."""
     agent_ids = plan["agent_ids"]
     mode = plan["mode"]
+    resource_context_by_agent = resource_context_by_agent or {}
 
     if not agent_ids:
         yield {"type": "error", "message": "No agents are in your library yet - install or create one first."}
@@ -138,9 +159,11 @@ async def run_assistant_turn(
             running_context = ""
             for aid in agent_ids:
                 row = agents_by_id[aid]
+                kb_context = resource_context_by_agent.get(aid)
+                combined_context = "\n\n".join(c for c in (kb_context, running_context or None) if c) or None
                 queue: asyncio.Queue = asyncio.Queue()
                 task = asyncio.create_task(
-                    _run_agent_streamed(aid, row, message, running_context or None, queue)
+                    _run_agent_streamed(aid, row, message, combined_context, queue)
                 )
                 text = ""
                 while True:
@@ -157,7 +180,11 @@ async def run_assistant_turn(
         else:
             queue = asyncio.Queue()
             tasks = [
-                asyncio.create_task(_run_agent_streamed(aid, agents_by_id[aid], message, None, queue))
+                asyncio.create_task(
+                    _run_agent_streamed(
+                        aid, agents_by_id[aid], message, resource_context_by_agent.get(aid), queue
+                    )
+                )
                 for aid in agent_ids
             ]
             done_count = 0

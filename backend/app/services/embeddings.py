@@ -32,5 +32,9 @@ async def embed_texts(texts: list[str]) -> list[list[float]]:
     response = await client.embeddings.create(
         model=settings.azure_openai_embedding_deployment,
         input=texts,
+        # Fixed regardless of which embedding model is configured, so the
+        # pgvector column width (see app/framework/vector_search.py) never
+        # has to change if the deployment is swapped for a different model.
+        dimensions=1536,
     )
     return [item.embedding for item in response.data]

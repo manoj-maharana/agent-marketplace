@@ -11,6 +11,11 @@ frontend/node_modules/
 frontend/dist/
 frontend/*.tsbuildinfo
 
+# Deploy artifacts - live credentials, never commit
+deploy/publish-profile.xml
+deploy/azure-credentials.json
+deploy/*.generated.yaml
+
 # OS / editor
 .DS_Store
 *.log

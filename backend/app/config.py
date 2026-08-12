@@ -9,6 +9,10 @@ class Settings(BaseSettings):
     # Database — defaults to the docker-compose Postgres service. Override with
     # a sqlite+aiosqlite:// URL for zero-setup local dev without Docker.
     database_url: str = "postgresql+asyncpg://agentmarket:agentmarket@localhost:5432/agentmarket"
+    # asyncpg doesn't parse libpq-style `?sslmode=require` in the URL, so SSL is
+    # negotiated via connect_args instead (see app/db.py). Azure Database for
+    # PostgreSQL requires SSL; local docker-compose Postgres doesn't use it.
+    database_ssl: bool = False
 
     # Azure OpenAI
     azure_openai_endpoint: str = ""

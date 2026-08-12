@@ -19,7 +19,14 @@ def test_list_agents_seeded():
         assert resp.status_code == 200
         data = resp.json()
         assert data["total"] >= 30
-        assert any(a["slug"] == "study-buddy" for a in data["items"])
+
+        # Most seeded agents share one insert-time updated_at, so which ones
+        # land in an arbitrary default-order page is DB-engine-dependent
+        # (this flaked between local SQLite and CI's SQLite build). Look the
+        # agent up directly instead of assuming its position in a truncated
+        # default-order page, matching the pattern the rest of this suite uses.
+        search = client.get("/api/agents", params={"q": "Study Buddy", "page_size": 5})
+        assert any(a["slug"] == "study-buddy" for a in search.json()["items"])
 
 
 def test_list_skills_seeded():

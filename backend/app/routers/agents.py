@@ -66,7 +66,14 @@ async def list_agents(
 
     total = (await db.execute(count_stmt)).scalar_one()
 
-    stmt = stmt.order_by(Agent.updated_at.desc()).offset((page - 1) * page_size).limit(page_size)
+    # Most seeded agents share the same updated_at (they're all inserted in one
+    # batch), so updated_at alone leaves ties whose order SQLite doesn't
+    # guarantee - a secondary key keeps pagination stable across DB engines.
+    stmt = (
+        stmt.order_by(Agent.updated_at.desc(), Agent.id.desc())
+        .offset((page - 1) * page_size)
+        .limit(page_size)
+    )
     items = (await db.execute(stmt)).scalars().unique().all()
 
     return AgentListResponse(items=items, total=total, page=page, page_size=page_size)

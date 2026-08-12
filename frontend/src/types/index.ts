@@ -129,6 +129,108 @@ export type StreamEvent =
   | { type: "done"; content: string }
   | { type: "error"; message: string };
 
+export type TaskPriority = "none" | "low" | "medium" | "high";
+export type TaskRecurrence = "once" | "daily" | "weekly";
+
+export interface TaskRun {
+  id: number;
+  output: string;
+  created_at: string;
+}
+
+export interface Task {
+  id: number;
+  title: string;
+  description: string;
+  agent_id: number | null;
+  priority: TaskPriority;
+  assignee: string | null;
+  is_private: boolean;
+  recurrence: TaskRecurrence;
+  recurrence_day: number | null;
+  recurrence_hour: number;
+  is_active: boolean;
+  next_run_at: string | null;
+  last_run_at: string | null;
+  created_at: string;
+  updated_at: string;
+  agent: Agent | null;
+}
+
+export interface TaskCreatePayload {
+  title: string;
+  description?: string;
+  agent_id?: number | null;
+  priority?: TaskPriority;
+  assignee?: string | null;
+  is_private?: boolean;
+  recurrence?: TaskRecurrence;
+  recurrence_day?: number | null;
+  recurrence_hour?: number;
+}
+
+export interface TaskUpdatePayload {
+  title?: string;
+  description?: string;
+  agent_id?: number | null;
+  priority?: TaskPriority;
+  assignee?: string | null;
+  is_private?: boolean;
+  recurrence?: TaskRecurrence;
+  recurrence_day?: number | null;
+  recurrence_hour?: number;
+  is_active?: boolean;
+}
+
+export interface Resource {
+  id: number;
+  filename: string;
+  content_type: string;
+  size_bytes: number;
+  created_at: string;
+}
+
+export interface AssistantThread {
+  id: number;
+  title: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AssistantRoutingContribution {
+  agent_id: number;
+  agent_title: string;
+  content: string;
+}
+
+export interface AssistantRouting {
+  mode: "single" | "parallel" | "sequential";
+  contributions: AssistantRoutingContribution[];
+}
+
+export interface AssistantMessage {
+  id: number;
+  thread_id: number;
+  role: "user" | "assistant";
+  content: string;
+  routing: AssistantRouting | null;
+  created_at: string;
+}
+
+export type AssistantStreamEvent =
+  | {
+      type: "route";
+      mode: "single" | "parallel" | "sequential";
+      agents: { id: number; title: string }[];
+      reason: string;
+    }
+  | { type: "agent_start"; agent_id: number; agent_title: string }
+  | { type: "agent_token"; agent_id: number; content: string }
+  | { type: "agent_done"; agent_id: number; content: string }
+  | { type: "token"; content: string }
+  | { type: "done"; content: string; routing?: AssistantRouting }
+  | { type: "error"; message: string };
+
 export type AgentGroupMode = "sequential" | "parallel" | "iterative" | "debate";
 
 export interface AgentGroupMember {

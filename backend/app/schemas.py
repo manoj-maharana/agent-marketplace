@@ -169,6 +169,98 @@ class McpServerListResponse(BaseModel):
     page_size: int
 
 
+class AssistantThreadOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    title: str
+    created_at: datetime
+    updated_at: datetime
+
+
+class AssistantThreadCreate(BaseModel):
+    title: str | None = None
+
+
+class AssistantMessageOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    thread_id: int
+    role: str
+    content: str
+    routing: dict | None = None
+    created_at: datetime
+
+
+class AssistantMessageCreate(BaseModel):
+    content: str
+
+
+class TaskRunOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    output: str
+    created_at: datetime
+
+
+class TaskOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    title: str
+    description: str
+    agent_id: int | None
+    priority: str
+    assignee: str | None
+    is_private: bool
+    recurrence: str
+    recurrence_day: int | None
+    recurrence_hour: int
+    is_active: bool
+    next_run_at: datetime | None
+    last_run_at: datetime | None
+    created_at: datetime
+    updated_at: datetime
+    agent: AgentOut | None = None
+
+
+class TaskCreate(BaseModel):
+    title: str
+    description: str = ""
+    agent_id: int | None = None
+    priority: str = "none"  # none | low | medium | high
+    assignee: str | None = None
+    is_private: bool = False
+    recurrence: str = "once"  # once | daily | weekly
+    recurrence_day: int | None = None  # 0=Mon..6=Sun, weekly only
+    recurrence_hour: int = 9  # 0-23 UTC
+
+
+class TaskUpdate(BaseModel):
+    title: str | None = None
+    description: str | None = None
+    agent_id: int | None = None
+    priority: str | None = None
+    assignee: str | None = None
+    is_private: bool | None = None
+    recurrence: str | None = None
+    recurrence_day: int | None = None
+    recurrence_hour: int | None = None
+    is_active: bool | None = None
+
+
+class ResourceOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    filename: str
+    content_type: str
+    size_bytes: int
+    created_at: datetime
+
+
 class KnowledgeFileOut(BaseModel):
     id: int
     filename: str

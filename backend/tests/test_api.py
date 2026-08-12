@@ -176,6 +176,211 @@ def test_delete_custom_agent():
         assert get_resp.status_code == 404
 
 
+def test_assistant_routes_and_persists_turn_without_azure_config():
+    with TestClient(app) as client:
+        agents = client.get("/api/agents", params={"q": "Study Buddy"}).json()["items"]
+        agent_id = agents[0]["id"]
+        client.post(f"/api/agents/{agent_id}/install")
+
+        thread = client.post("/api/assistant/threads", json={}).json()
+        thread_id = thread["id"]
+        assert thread["title"] == "New thread"
+
+        with client.stream(
+            "POST", f"/api/assistant/threads/{thread_id}/messages", json={"content": "Help me study for chemistry"}
+        ) as resp:
+            assert resp.status_code == 200
+            body = "".join(resp.iter_text())
+        assert '"type": "route"' in body
+        # Azure isn't configured in tests, so the delegated agent's own stream_chat call
+        # surfaces the same "not configured" message regular chat does - folded into the
+        # agent's content rather than a raw error event, since with multiple agents an
+        # error needs to be attributable to whichever one produced it.
+        assert "not configured" in body
+
+        msgs = client.get(f"/api/assistant/threads/{thread_id}/messages").json()
+        assert [m["role"] for m in msgs] == ["user", "assistant"]
+        assert msgs[0]["content"] == "Help me study for chemistry"
+        assert "not configured" in msgs[1]["content"]
+
+        updated_thread = client.get("/api/assistant/threads").json()
+        assert next(t for t in updated_thread if t["id"] == thread_id)["title"] == "Help me study for chemistry"
+
+
+def test_assistant_thread_list_and_delete():
+    with TestClient(app) as client:
+        thread = client.post("/api/assistant/threads", json={"title": "Scratch thread"}).json()
+        thread_id = thread["id"]
+
+        listing = client.get("/api/assistant/threads").json()
+        assert any(t["id"] == thread_id for t in listing)
+
+        del_resp = client.delete(f"/api/assistant/threads/{thread_id}")
+        assert del_resp.status_code == 204
+
+        listing_after = client.get("/api/assistant/threads").json()
+        assert not any(t["id"] == thread_id for t in listing_after)
+
+
+def test_assistant_message_with_no_library_agents_returns_clear_error():
+    with TestClient(app) as client:
+        # A fresh custom agent that's never installed/created won't exist here,
+        # but every seeded agent could already be installed by other tests in
+        # this session's shared DB - so instead exercise plan_route directly
+        # against an empty agent list, which is the actual "nothing to route
+        # to" case regardless of what's installed elsewhere.
+        import asyncio
+
+        from app.framework.assistant_router import plan_route, run_assistant_turn
+
+        plan = asyncio.run(plan_route("anything", []))
+        assert plan["agent_ids"] == []
+
+        async def collect():
+            return [e async for e in run_assistant_turn("anything", {}, plan)]
+
+        events = asyncio.run(collect())
+        assert events[0]["type"] == "error"
+        assert "library" in events[0]["message"]
+
+
+def test_task_scheduler_recurrence_math():
+    from datetime import datetime, timezone
+
+    from app.framework.task_scheduler import compute_next_run
+
+    now = datetime(2026, 1, 5, 8, 0, tzinfo=timezone.utc)  # a Monday
+    # Daily: target hour today hasn't passed yet -> runs today.
+    assert compute_next_run("daily", None, 9, now) == datetime(2026, 1, 5, 9, 0, tzinfo=timezone.utc)
+    # Daily: target hour today already passed -> runs tomorrow.
+    assert compute_next_run("daily", None, 7, now) == datetime(2026, 1, 6, 7, 0, tzinfo=timezone.utc)
+    # Weekly: next occurrence of the given weekday (0=Mon), same week if not yet passed.
+    assert compute_next_run("weekly", 2, 9, now) == datetime(2026, 1, 7, 9, 0, tzinfo=timezone.utc)  # Wed
+    # Once: never auto-scheduled.
+    assert compute_next_run("once", None, 9, now) is None
+
+
+def test_task_crud_and_recurrence_scheduling():
+    with TestClient(app) as client:
+        agents = client.get("/api/agents", params={"q": "Study Buddy"}).json()["items"]
+        agent_id = agents[0]["id"]
+
+        plain = client.post("/api/tasks", json={"title": "Buy groceries"}).json()
+        assert plain["next_run_at"] is None  # plain checklist item - never auto-scheduled
+
+        recurring = client.post(
+            "/api/tasks",
+            json={
+                "title": "Daily learning bite",
+                "agent_id": agent_id,
+                "recurrence": "daily",
+                "recurrence_hour": 9,
+            },
+        ).json()
+        assert recurring["next_run_at"] is not None
+        assert recurring["agent"]["id"] == agent_id
+
+        listing = client.get("/api/tasks").json()
+        assert any(t["id"] == plain["id"] for t in listing)
+        assert any(t["id"] == recurring["id"] for t in listing)
+
+        patched = client.patch(f"/api/tasks/{recurring['id']}", json={"recurrence": "once"}).json()
+        assert patched["next_run_at"] is None  # switching to "once" clears the schedule
+
+        assert client.delete(f"/api/tasks/{plain['id']}").status_code == 204
+        assert client.get("/api/tasks").json()
+        assert not any(t["id"] == plain["id"] for t in client.get("/api/tasks").json())
+
+
+def test_task_run_now_without_agent_returns_400():
+    with TestClient(app) as client:
+        plain = client.post("/api/tasks", json={"title": "No agent here"}).json()
+        resp = client.post(f"/api/tasks/{plain['id']}/run-now")
+        assert resp.status_code == 400
+
+
+def test_task_run_now_without_azure_config_records_run():
+    with TestClient(app) as client:
+        agents = client.get("/api/agents", params={"q": "Study Buddy"}).json()["items"]
+        agent_id = agents[0]["id"]
+        task = client.post("/api/tasks", json={"title": "Test run", "agent_id": agent_id}).json()
+
+        resp = client.post(f"/api/tasks/{task['id']}/run-now")
+        assert resp.status_code == 201
+        assert "not configured" in resp.json()["output"]
+
+        runs = client.get(f"/api/tasks/{task['id']}/runs").json()
+        assert len(runs) == 1
+
+
+def test_check_due_runs_and_reschedules_due_tasks():
+    import asyncio
+    from datetime import timedelta
+
+    from app.db import async_session_factory
+    from app.framework.task_scheduler import check_and_run_due_tasks
+    from app.models import Task, utcnow
+
+    with TestClient(app) as client:
+        agents = client.get("/api/agents", params={"q": "Study Buddy"}).json()["items"]
+        agent_id = agents[0]["id"]
+        created = client.post(
+            "/api/tasks",
+            json={
+                "title": "Overdue task",
+                "agent_id": agent_id,
+                "recurrence": "daily",
+                "recurrence_hour": 9,
+            },
+        ).json()
+        task_id = created["id"]
+
+        # A freshly-created task's next_run_at is always in the future by
+        # construction - force it into the past directly to simulate time
+        # having passed, then exercise the same due-check the API uses.
+        async def make_overdue_and_check():
+            async with async_session_factory() as db:
+                task = await db.get(Task, task_id)
+                task.next_run_at = utcnow() - timedelta(hours=1)
+                await db.commit()
+            async with async_session_factory() as db:
+                return await check_and_run_due_tasks(db)
+
+        ran = asyncio.run(make_overdue_and_check())
+        assert any(r["task_id"] == task_id for r in ran)
+
+        after = next(t for t in client.get("/api/tasks").json() if t["id"] == task_id)
+        assert after["last_run_at"] is not None
+        assert after["next_run_at"] is not None  # rescheduled forward, not left null
+
+
+def test_resource_upload_without_storage_configured():
+    with TestClient(app) as client:
+        resp = client.post(
+            "/api/resources",
+            files={"file": ("notes.pdf", b"%PDF-1.4", "application/pdf")},
+        )
+        assert resp.status_code == 400
+        assert "not configured" in resp.json()["detail"]
+
+
+def test_resource_upload_rejects_unsupported_extension():
+    with TestClient(app) as client:
+        resp = client.post(
+            "/api/resources",
+            files={"file": ("virus.exe", b"MZ", "application/octet-stream")},
+        )
+        assert resp.status_code == 400
+        assert "Unsupported file type" in resp.json()["detail"]
+
+
+def test_resource_list_starts_empty():
+    with TestClient(app) as client:
+        resp = client.get("/api/resources")
+        assert resp.status_code == 200
+        assert resp.json() == []
+
+
 def test_regex_tester_skill():
     result = asyncio.run(skill_registry.call("regex_tester", {"pattern": r"\d+", "text": "a1 b22 c333"}))
     assert result["valid"] is True

@@ -10,6 +10,7 @@ os.environ["DATABASE_URL"] = f"sqlite+aiosqlite:///{TEST_DB_PATH}"
 os.environ.setdefault("AUTO_SEED", "true")
 os.environ.setdefault("AZURE_OPENAI_ENDPOINT", "")
 os.environ.setdefault("AZURE_OPENAI_API_KEY", "")
+os.environ["AZURE_STORAGE_CONNECTION_STRING"] = ""
 
 
 @pytest.fixture(scope="session", autouse=True)

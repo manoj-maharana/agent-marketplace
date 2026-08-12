@@ -6,13 +6,16 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import get_settings
 from app.routers import (
     agents,
+    assistant,
     categories,
     chat,
     experimental_agent_groups,
     experimental_deepagents,
     knowledge,
     mcp,
+    resources,
     skills,
+    tasks,
 )
 from app.seed import seed
 
@@ -40,7 +43,10 @@ app.include_router(categories.router)
 app.include_router(agents.router)
 app.include_router(skills.router)
 app.include_router(chat.router)
+app.include_router(assistant.router)
 app.include_router(knowledge.router)
+app.include_router(resources.router)
+app.include_router(tasks.router)
 app.include_router(mcp.router)
 app.include_router(experimental_deepagents.router)
 app.include_router(experimental_agent_groups.router)

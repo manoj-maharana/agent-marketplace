@@ -14,11 +14,13 @@ import { Home } from "@/pages/Home";
 import { Landing } from "@/pages/Landing";
 import { McpDetail } from "@/pages/McpDetail";
 import { McpMarketplace } from "@/pages/McpMarketplace";
+import { Resources } from "@/pages/Resources";
 import { SkillMarketplace } from "@/pages/SkillMarketplace";
+import { Tasks } from "@/pages/Tasks";
 
-// These two pages own their full-page layout (own sidebar or none at all) -
+// These pages own their full-page layout (own sidebar or none at all) -
 // they don't render inside the marketplace app shell below.
-const STANDALONE_ROUTES = ["/", "/assistant"];
+const STANDALONE_ROUTES = ["/", "/assistant", "/assistant/tasks", "/assistant/resources"];
 
 export default function App() {
   const location = useLocation();
@@ -28,6 +30,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/assistant" element={<AssistantHome />} />
+        <Route path="/assistant/tasks" element={<Tasks />} />
+        <Route path="/assistant/resources" element={<Resources />} />
       </Routes>
     );
   }

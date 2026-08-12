@@ -6,7 +6,11 @@ React + TypeScript frontend, FastAPI backend, PostgreSQL, and Azure OpenAI for t
 - **Agent Marketplace** — browse, search, and filter ready-made agents by category; add any of them to your personal library with one click.
 - **Skill Marketplace** — browse tools ("skills") agents can call mid-conversation. Skills tagged **Live** are wired up end to end (calculator, web search, unit converter, text analyzer, current date/time); the rest are catalog entries you can extend.
 - **Chat** — pick any agent from your library and chat with it. Responses stream token-by-token; when an agent has Live skills enabled, it can call them mid-answer (Azure OpenAI function/tool calling) and you'll see the tool call happen live.
-- **Create Agent** — define your own agent: name, avatar, category, system prompt, temperature, and which skills it can use. It's chat-ready immediately.
+- **Create Agent** — define your own agent: name, avatar, category, system prompt, temperature, and which skills it can use (an agent can have any number of skills — it's a many-to-many relationship, not a single pick). It's chat-ready immediately.
+- **Assistant** (`/assistant`) — a chat-first home page separate from picking one agent. Type anything and an LLM routing pass (`backend/app/framework/assistant_router.py`) decides which of your library agents should handle it — one agent for a single clear ask, several in parallel for independent sub-tasks, or a chain where one agent's output feeds the next. Every delegated agent streams its own contribution live; multi-agent turns get a final synthesized answer. See `AssistantThread`/`AssistantMessage` in `models.py` and `routers/assistant.py`.
+- **Tasks** (`/assistant/tasks`) — one-off checklist items, or hand a task to an agent on a daily/weekly recurrence. Recurring tasks are checked *lazily*: `POST /api/tasks/check-due` runs whenever the Tasks page is opened (see `AssistantHome`'s/`Tasks`' mount effect), not via a server-side cron job — a task only fires once someone has the app open at/after its due time. Upgrading to real server-side scheduling (e.g. an Azure Container Apps Job on a Schedule trigger) is a mechanical follow-up if that limitation ever matters.
+- **Resources** (`/assistant/resources`) — workspace-level file storage (PDF, Word, PPT, Excel, Markdown, text, CSV), stored as raw blobs in Azure Blob Storage (`backend/app/services/blob_storage.py`) — distinct from the per-agent Knowledge base below, which only keeps derived text chunks for RAG, never the original file.
+- **Knowledge base** — attach `.txt`/`.md` files to a specific agent (via its chat page) for retrieval-augmented answers; needs an Azure OpenAI embeddings deployment.
 
 No user accounts in v1 — it's a single-user local app. Auth can be layered on later.
 
@@ -181,8 +185,12 @@ containerapp update`, not `azure/webapps-deploy`.
    Container Apps can't pull a private image without extra registry credentials wired in
    separately.
 4. **Azure Portal → Container Apps → your app → Containers → Environment variables**, fill in the
-   two values the script left blank (these are real secrets — set them here, never in GitHub or
-   in code): `AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_API_KEY`.
+   values the script left blank (these are real secrets — set them here, never in GitHub or in
+   code): `AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_API_KEY`, and (only if you want the Resources
+   feature working in production) `AZURE_STORAGE_CONNECTION_STRING` from an Azure Storage account
+   — any Storage V2 account works, create a private blob container in it named to match
+   `AZURE_STORAGE_CONTAINER` (defaults to `resources`). Without it, uploads just return a clear
+   "not configured" error — nothing else breaks.
 5. Confirm: `https://<your-app>.<random>.<region>.azurecontainerapps.io/health` should return
    `{"status":"ok","azure_openai_configured":true}`.
 
@@ -218,7 +226,7 @@ containerapp update`, not `azure/webapps-deploy`.
 
 | Secret | Lives in | Why |
 |---|---|---|
-| `AZURE_OPENAI_API_KEY`, `DATABASE_URL` | Azure Container Apps → Containers → Environment variables | Only the running backend needs these; GitHub Actions only builds and ships the container, it never runs your app or needs your OpenAI key. |
+| `AZURE_OPENAI_API_KEY`, `DATABASE_URL`, `AZURE_STORAGE_CONNECTION_STRING` | Azure Container Apps → Containers → Environment variables | Only the running backend needs these; GitHub Actions only builds and ships the container, it never runs your app or needs these credentials. |
 | `AZURE_CREDENTIALS` | GitHub repo secret | A resource-group-scoped service principal, used only to authenticate the deploy step — not your OpenAI key, and can't touch anything outside this one resource group. |
 | `VITE_API_BASE_URL` | Vercel project → Environment Variables | Not sensitive — it's just your backend's public URL, baked into the frontend build. |
 
@@ -229,5 +237,6 @@ Nothing above should ever be pasted into this chat or committed to the repo — 
 ## Notes & known limitations
 
 - Single implicit local user, no accounts yet — "installing" an agent or creating one adds it to the one shared library.
-- Of the ~21 seeded skills, 5 are real callable tools (calculator, current date/time, unit converter, text analyzer, web search via DuckDuckGo); the rest are catalog entries meant to be filled in with real implementations under `backend/app/skills_impl/` + `backend/app/services/tool_registry.py`.
-- Chat is one agent per conversation (no group/multi-agent collaboration yet).
+- Of the 64 seeded skills, 15 are real callable tools (calculator, current date/time, unit converter, text analyzer, web search, regex tester, CSV explorer, citation formatter, JSON formatter, keyword extractor, color palette generator, and a few workspace-introspection tools); the rest are catalog entries meant to be filled in with real implementations.
+- Chat (`/chat/:agentId`) is one agent per conversation. The Assistant (`/assistant`) is the multi-agent path — it routes freeform messages across your library agents instead. There's also an experimental, non-production Agent Groups feature (`/groups`) for manually-configured multi-agent teams.
+- Tasks only run while someone has the Tasks page open at/after the due time (see the Tasks feature note above) — there's no server-side cron in v1.

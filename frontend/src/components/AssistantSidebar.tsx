@@ -1,10 +1,12 @@
-import { Bell, LayoutGrid, Plug, Plus, Puzzle, Search, Sparkles, Users } from "lucide-react";
+import { Bell, CheckSquare, FolderOpen, LayoutGrid, Plug, Plus, Puzzle, Search, Sparkles, Users } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
 import { useAgents } from "@/api/agents";
 import { cn } from "@/lib/cn";
 
 const TOP_NAV = [
   { to: "/assistant", label: "Home", icon: Sparkles },
+  { to: "/assistant/tasks", label: "Tasks", icon: CheckSquare },
+  { to: "/assistant/resources", label: "Resources", icon: FolderOpen },
   { to: "/home", label: "Marketplace", icon: LayoutGrid },
   { to: "/skills", label: "Skills", icon: Puzzle },
   { to: "/mcp", label: "MCP", icon: Plug },

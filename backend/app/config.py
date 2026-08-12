@@ -21,6 +21,12 @@ class Settings(BaseSettings):
     azure_openai_deployment: str = "gpt-4o"
     azure_openai_embedding_deployment: str = "text-embedding-3-small"
 
+    # Azure Blob Storage — backs the workspace-level Resources feature (raw
+    # file storage: PDF/Word/PPT/Excel/etc, distinct from the per-agent
+    # Knowledge base which only stores derived text chunks + embeddings).
+    azure_storage_connection_string: str = ""
+    azure_storage_container: str = "resources"
+
     # App
     cors_origins: list[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
     auto_seed: bool = True
@@ -28,6 +34,10 @@ class Settings(BaseSettings):
     @property
     def azure_openai_configured(self) -> bool:
         return bool(self.azure_openai_endpoint and self.azure_openai_api_key)
+
+    @property
+    def blob_storage_configured(self) -> bool:
+        return bool(self.azure_storage_connection_string)
 
 
 @lru_cache

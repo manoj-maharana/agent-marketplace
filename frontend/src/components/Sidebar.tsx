@@ -76,7 +76,7 @@ export function Sidebar() {
           <Users className="size-4" />
           New Group
         </NavLink>
-        <p className="px-1 text-center text-xs text-text-faint">Powered by Azure OpenAI</p>
+        <p className="px-1 text-center text-xs text-text-faint">Created and developed by Manoj Maharana</p>
       </div>
     </aside>
   );

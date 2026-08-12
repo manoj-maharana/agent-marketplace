@@ -124,16 +124,18 @@ case deleting and recreating the whole resource group is faster than waiting it 
 ### 1. Database + backend — one script
 
 `deploy/azure-provision.ps1` creates the resource group, the Container Apps environment, the
-Container App, and wires up every environment variable the backend needs. Database defaults to
-**SQLite on an Azure Files volume** mounted into the container at `/data` — genuinely free, zero
-code changes (the app already fully supports SQLite for local dev). Worth knowing: SQLite on a
-network filesystem (Azure Files is SMB) is outside SQLite's officially supported configurations —
-locking guarantees aren't the same as local disk. The script hardcodes `-MaxReplicas 1` specifically
-to avoid concurrent multi-writer corruption; for a single-user app with one replica this is a
-widely-used pattern in practice, but it is not the same durability guarantee a managed database
-gives you. Pass `-DbMode external -DatabaseUrl "postgresql+asyncpg://..."` (e.g. a free
-[Neon](https://neon.tech) project) instead if you want a real client-server database with no
-locking caveat — same zero-code-change path, since the app already speaks `postgresql+asyncpg`.
+Container App, and wires up every environment variable the backend needs. Database is an external
+Postgres via `-DatabaseUrl` (e.g. a free [Neon](https://neon.tech) project) — zero code changes,
+since the app already speaks `postgresql+asyncpg`.
+
+This is the *only* free option that actually works on Container Apps. SQLite on a Container Apps
+Azure Files (SMB) volume was tried first and confirmed broken, not just theoretically risky:
+`sqlite3.OperationalError: database is locked` on every single startup, because Azure Files' SMB
+implementation doesn't support the byte-range locking SQLite needs even to create its schema — the
+db file stayed permanently 0 bytes. There's no fix for that short of not using SQLite over SMB, so
+this script doesn't offer it. Pass `-DbMode postgres` instead of the default `external` if you'd
+rather have Azure create a managed Postgres Flexible Server — needs your subscription's PostgreSQL
+quota approved first (see the note above).
 
 ```powershell
 # One-time setup:
@@ -141,7 +143,8 @@ winget install Microsoft.AzureCLI   # then reopen the terminal
 az login
 
 cd deploy
-./azure-provision.ps1 -AppName "agent-marketplace-<something-unique>"
+./azure-provision.ps1 -AppName "agent-marketplace-<something-unique>" `
+  -DatabaseUrl "postgresql+asyncpg://user:pass@ep-xxx.neon.tech/neondb"
 ```
 
 `AppName` must be globally unique within your region — it becomes the Container App name and part
@@ -191,9 +194,25 @@ containerapp update`, not `azure/webapps-deploy`.
    (no trailing slash, no `/api` suffix — the frontend adds that itself).
 4. Deploy. `frontend/vercel.json` handles the build command, output directory, and the SPA
    rewrite React Router needs for direct links to work (e.g. loading `/agents/12` directly).
-5. Once you have the Vercel URL: **Azure Portal → Container Apps → your app → Containers →
-   Environment variables**, update `CORS_ORIGINS` to `["https://your-app.vercel.app"]` — otherwise
-   the browser blocks the frontend's API calls.
+5. Once you have the Vercel URL, update `CORS_ORIGINS`. **Don't** set it via the Portal's plain
+   text field or `az containerapp update --set-env-vars` from a Windows shell — `az.cmd`
+   re-tokenizes arguments through `cmd.exe`, which silently strips the double quotes out of a JSON
+   value like `["https://your-app.vercel.app"]`, and the backend crash-loops trying to parse the
+   resulting invalid JSON at startup. Use a YAML update instead (same trick the provisioning script
+   uses for this exact env var):
+   ```powershell
+   @'
+   properties:
+     template:
+       containers:
+       - image: <current image, e.g. ghcr.io/you/agent-marketplace-backend:latest>
+         name: <your -AppName>
+         env:
+         - name: CORS_ORIGINS
+           value: '["https://your-app.vercel.app"]'
+   '@ | Out-File cors-update.yaml -Encoding utf8
+   az containerapp update --name <your -AppName> --resource-group <your -ResourceGroup> --yaml cors-update.yaml
+   ```
 
 ### Where secrets actually live
 

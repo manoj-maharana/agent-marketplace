@@ -20,22 +20,18 @@
   fully clear (can take several minutes; occasionally gets stuck - if so,
   delete and recreate the whole resource group instead of waiting further).
 
-  Database, three options via -DbMode:
-    sqlite   (default) SQLite on an Azure Files volume mounted into the
-             container at /data. Genuinely free (no separate DB resource
-             billed beyond pennies of file storage), zero code changes.
-             Caveat: SQLite on a network filesystem (SMB, which is what
-             Azure Files is) is officially outside SQLite's supported
-             configurations - locking semantics aren't fully guaranteed the
-             way they are on local disk. -MaxReplicas is hardcoded to 1
-             specifically to avoid concurrent multi-writer corruption; for
-             a single-user app with a single replica this is a widely used
-             pattern in practice, but it is not Azure's own managed-DB
-             durability guarantee. Migrate to -DbMode postgres or external
-             if this ever needs to be more than a personal deployment.
-    external Point at an already-existing external Postgres (e.g. a free
-             Neon project) via -DatabaseUrl. Real client-server DB, no
-             locking caveat, but not literally "on Azure."
+  Database, via -DbMode:
+    external (default) Point at an already-existing external Postgres (e.g.
+             a free Neon project) via -DatabaseUrl (required in this mode).
+             Zero code changes, since the app already speaks
+             postgresql+asyncpg. This is the only free option confirmed to
+             actually work: SQLite on a Container Apps Azure Files (SMB)
+             volume was tried and fails outright - SQLite can't even create
+             its schema there (sqlite3.OperationalError: database is
+             locked, every single startup) because Azure Files' SMB
+             implementation doesn't support the byte-range locking SQLite
+             requires. That's not a theoretical risk, it's a confirmed
+             hard failure, so this script doesn't offer a "sqlite" mode.
     postgres Create an Azure Database for PostgreSQL Flexible Server.
              Needs your subscription's PostgreSQL quota approved first
              (see the note above) - will fail with "location is restricted"
@@ -52,16 +48,12 @@
 
 .EXAMPLE
   cd deploy
-  ./azure-provision.ps1 -AppName "agent-marketplace-manoj"
+  ./azure-provision.ps1 -AppName "agent-marketplace-manoj" `
+    -DatabaseUrl "postgresql+asyncpg://user:pass@ep-xxx.neon.tech/neondb"
 
   AppName must be globally unique within your region - it becomes the
   Container App name and part of its auto-generated FQDN
   (https://<AppName>.<random>.<region>.azurecontainerapps.io).
-
-.EXAMPLE
-  # External Postgres (e.g. Neon) instead of SQLite:
-  ./azure-provision.ps1 -AppName "agent-marketplace-manoj" -DbMode external `
-    -DatabaseUrl "postgresql+asyncpg://user:pass@ep-xxx.neon.tech/neondb"
 #>
 
 param(
@@ -76,8 +68,8 @@ param(
   # on your subscription (common on brand-new subscriptions).
   [string]$ResourceLocation = "",
 
-  [ValidateSet("sqlite", "external", "postgres")]
-  [string]$DbMode = "sqlite",
+  [ValidateSet("external", "postgres")]
+  [string]$DbMode = "external",
 
   [string]$DbAdminUser = "dbadmin",
   [string]$DbSkuName = "Standard_B1ms",
@@ -85,7 +77,7 @@ param(
   [string]$DbAdminPassword = "",
 
   # Full postgresql+asyncpg://... connection string to an already-existing
-  # Postgres instance (e.g. Neon, Supabase). Required when -DbMode external.
+  # Postgres instance (e.g. Neon, Supabase). Required unless -DbMode postgres.
   [string]$DatabaseUrl = "",
 
   [string]$Cpu = "0.5",
@@ -133,7 +125,8 @@ function New-RandomPassword {
 }
 
 if ($DbMode -eq "external" -and [string]::IsNullOrWhiteSpace($DatabaseUrl)) {
-  Write-Host "-DbMode external requires -DatabaseUrl (e.g. a free Neon connection string)." -ForegroundColor Red
+  Write-Host "-DbMode external (the default) requires -DatabaseUrl (e.g. a free Neon connection string)." -ForegroundColor Red
+  Write-Host "Or pass -DbMode postgres to create an Azure Database for PostgreSQL Flexible Server instead." -ForegroundColor Red
   exit 1
 }
 
@@ -182,27 +175,10 @@ if ($DbMode -eq "postgres") {
 
   $dbHost = "$dbServerName.postgres.database.azure.com"
   $databaseUrl = "postgresql+asyncpg://${DbAdminUser}:${DbAdminPassword}@${dbHost}:5432/${dbName}"
-  $dbSsl = "true"
-} elseif ($DbMode -eq "external") {
+} else {
   Write-Host "==> Using external Postgres (no Azure DB resource created)" -ForegroundColor Cyan
   $databaseUrl = $DatabaseUrl
   $dbHost = ([Uri]($DatabaseUrl -replace '^postgresql\+asyncpg://', 'http://')).Host
-  $dbSsl = "true"
-} else {
-  $storageAccountName = (($AppName -replace '[^a-zA-Z0-9]', '').ToLower())
-  if ($storageAccountName.Length -gt 24) { $storageAccountName = $storageAccountName.Substring(0, 24) }
-  $fileShareName = "sqlitedata"
-  $storageLinkName = "sqlite-storage"
-  Write-Host "==> Storage account for SQLite volume: $storageAccountName" -ForegroundColor Cyan
-  Invoke-Az storage account create `
-    --name $storageAccountName --resource-group $ResourceGroup `
-    --location $ResourceLocation --sku Standard_LRS --output none
-  $storageKey = az storage account keys list --resource-group $ResourceGroup --account-name $storageAccountName --query "[0].value" -o tsv
-  Invoke-Az storage share create --name $fileShareName --account-name $storageAccountName --account-key $storageKey --output none
-
-  $databaseUrl = "sqlite+aiosqlite:////data/dev.db"
-  $dbHost = "SQLite on Azure Files ($storageAccountName/$fileShareName, mounted at /data)"
-  $dbSsl = "false"
 }
 
 Write-Host "==> Container Apps environment: $envName in $ResourceLocation" -ForegroundColor Cyan
@@ -211,18 +187,6 @@ Invoke-Az containerapp env create `
   --resource-group $ResourceGroup `
   --location $ResourceLocation `
   --output none
-
-if ($DbMode -eq "sqlite") {
-  Write-Host "==> Linking SQLite storage to the environment" -ForegroundColor Cyan
-  Invoke-Az containerapp env storage set `
-    --resource-group $ResourceGroup --name $envName `
-    --storage-name $storageLinkName `
-    --azure-file-account-name $storageAccountName `
-    --azure-file-account-key $storageKey `
-    --azure-file-share-name $fileShareName `
-    --access-mode ReadWrite `
-    --output none
-}
 
 Write-Host "==> Container App: $AppName (placeholder image - the GitHub Actions workflow deploys the real one)" -ForegroundColor Cyan
 Invoke-Az containerapp create `
@@ -238,50 +202,35 @@ Invoke-Az containerapp create `
   --memory $Memory `
   --env-vars `
     "DATABASE_URL=$databaseUrl" `
-    "DATABASE_SSL=$dbSsl" `
+    "DATABASE_SSL=true" `
     "AZURE_OPENAI_ENDPOINT=" `
     "AZURE_OPENAI_API_KEY=" `
     "AZURE_OPENAI_API_VERSION=2024-10-21" `
     "AZURE_OPENAI_DEPLOYMENT=gpt-4o" `
     "AZURE_OPENAI_EMBEDDING_DEPLOYMENT=text-embedding-3-small" `
-    'CORS_ORIGINS=["http://localhost:5173"]' `
   --output none
 
-if ($DbMode -eq "sqlite") {
-  # Volume mounts aren't reliably settable via containerapp create's plain
-  # flags - add them with a follow-up YAML update instead, mirroring the
-  # container config that create just applied.
-  Write-Host "==> Attaching the SQLite volume mount at /data" -ForegroundColor Cyan
-  $updateYaml = @"
+# CORS_ORIGINS is set via a follow-up YAML update rather than --env-vars
+# above: az.cmd re-tokenizes arguments through cmd.exe on Windows, which
+# silently strips the double quotes out of JSON-array values like
+# ["http://localhost:5173"] even when passed as a single-quoted PowerShell
+# string - the app would then fail to parse it as JSON and crash-loop on
+# startup. A YAML file's content isn't subject to that re-tokenization.
+Write-Host "==> Setting CORS_ORIGINS (via YAML - avoids a Windows az.cmd quoting bug with JSON values)" -ForegroundColor Cyan
+$corsYaml = @"
 properties:
   template:
     containers:
     - image: mcr.microsoft.com/k8se/quickstart:latest
       name: $AppName
-      resources:
-        cpu: $Cpu
-        memory: $Memory
       env:
-      - name: DATABASE_URL
-        value: $databaseUrl
-      - name: DATABASE_SSL
-        value: "false"
-      volumeMounts:
-      - volumeName: sqlite-vol
-        mountPath: /data
-    scale:
-      minReplicas: $MinReplicas
-      maxReplicas: 1
-    volumes:
-    - name: sqlite-vol
-      storageType: AzureFile
-      storageName: $storageLinkName
+      - name: CORS_ORIGINS
+        value: '["http://localhost:5173"]'
 "@
-  $updateYamlPath = Join-Path $PSScriptRoot "containerapp-volume.generated.yaml"
-  $updateYaml | Out-File -FilePath $updateYamlPath -Encoding utf8
-  Invoke-Az containerapp update --name $AppName --resource-group $ResourceGroup --yaml $updateYamlPath --output none
-  Remove-Item $updateYamlPath -ErrorAction SilentlyContinue
-}
+$corsYamlPath = Join-Path $PSScriptRoot "containerapp-cors.generated.yaml"
+$corsYaml | Out-File -FilePath $corsYamlPath -Encoding utf8
+Invoke-Az containerapp update --name $AppName --resource-group $ResourceGroup --yaml $corsYamlPath --output none
+Remove-Item $corsYamlPath -ErrorAction SilentlyContinue
 
 $fqdn = az containerapp show --name $AppName --resource-group $ResourceGroup --query "properties.configuration.ingress.fqdn" -o tsv
 
@@ -319,10 +268,10 @@ Write-Host "   Then DELETE $credsPath locally - it's a live credential, don't le
 Write-Host "2. Azure Portal -> Container Apps -> '$AppName' -> Containers -> Environment variables, fill in:"
 Write-Host "     AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_API_KEY (from your Azure OpenAI resource)"
 Write-Host "3. GitHub -> Actions -> 'Deploy backend to Azure Container Apps' -> Run workflow."
-Write-Host "4. After pushing the image once, make the GHCR package public (repo -> Packages ->"
-Write-Host "   agent-marketplace-backend -> Package settings -> Change visibility), otherwise"
+Write-Host "4. After pushing the image once, make the GHCR package public: your profile -> Packages ->"
+Write-Host "   agent-marketplace-backend -> Package settings -> Change visibility -> Public. Otherwise"
 Write-Host "   Container Apps can't pull a private image without extra registry credentials."
-Write-Host "5. Once your Vercel frontend URL exists, update CORS_ORIGINS (Container App -> Containers"
-Write-Host "   -> Environment variables) to include it, e.g. [`"https://your-app.vercel.app`"]."
+Write-Host "5. Once your Vercel frontend URL exists, update CORS_ORIGINS the same YAML way this script"
+Write-Host "   just did (plain --set-env-vars will hit the same quoting bug for JSON values on Windows)."
 Write-Host "6. Verify: https://$fqdn/health should return"
 Write-Host '   {"status":"ok","azure_openai_configured":true}  (false until step 2 is done)'
